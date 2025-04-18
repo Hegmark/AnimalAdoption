@@ -9,6 +9,7 @@ export interface IAdoptionRequest extends Document {
     message: string,
     meetingDate: Date,
     createdAt: Date,
+    adReId: number
 }
 
 const AdoptionRequestSchema = new Schema<IAdoptionRequest>({
@@ -25,4 +26,7 @@ const AdoptionRequestSchema = new Schema<IAdoptionRequest>({
     createdAt: { type: Date, default: Date.now }
 });
 
-export const AdoptionRequest: Model<IAdoptionRequest> = mongoose.model<IAdoptionRequest>('AdoptioRequest', AdoptionRequestSchema);
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+(AdoptionRequestSchema as any).plugin(AutoIncrement, { inc_field: 'adReId' });
+
+export const AdoptionRequest: Model<IAdoptionRequest> = mongoose.model<IAdoptionRequest>('AdoptionRequest', AdoptionRequestSchema);

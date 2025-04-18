@@ -28,6 +28,10 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
 
 UserSchema.pre<IUser>('save', function(next) {
     const user = this;
+
+    if (!user.isModified('passwordHash')) {
+        return next();
+    }
     
     bcrypt.genSalt(SALT_FACTOR, (error, salt) => {
         if (error) {
@@ -47,6 +51,7 @@ UserSchema.methods.comparePassword = function(candidatePassword: string, callbac
     const user = this;
     bcrypt.compare(candidatePassword, user.passwordHash, (error, isMatch) => {
         if (error) {
+            console.log("Error comparing password:", error);
             callback(error, false);
         }
         callback(null, isMatch);

@@ -1,6 +1,6 @@
 import { News } from '../models/News';
 import { Router, Request, Response } from 'express';
-import { requireRole } from '../middlewares/requireRole';
+import { requireRole } from '../middlewares/auth';
 
 const router = Router();
 
@@ -69,8 +69,5 @@ router.delete('/:id', requireRole('admin'), (req: Request, res: Response) => {
             res.status(500).send('Internal server error.');
         });
 });
-
-
-
 
 export default router;

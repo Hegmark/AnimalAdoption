@@ -9,6 +9,8 @@ import passport from 'passport';
 import { configurePassport } from './passport/passport';
 import { userRoutes } from './routes/user.routes';
 import newsRoutes from './routes/news.routes';
+import animalRoutes from './routes/animal.routes';
+import adoptionRoutes from './routes/adoptionRequest.routes';
 
 
 const app = express();
@@ -55,6 +57,8 @@ configurePassport(passport);
 
 app.use('/api/user', userRoutes(passport, Router()));
 app.use('/api/news', newsRoutes);
+app.use('/api/animals', animalRoutes);
+app.use('/api/adoption', adoptionRoutes);
 
 
 app.listen(port, () => {

@@ -17,3 +17,12 @@ export function requireRole(role: 'admin' | 'adopter') {
       return res.status(403).send('Forbidden: Insufficient permissions');
     };
 }
+
+export function requireAuthentication() {
+  return (req: Request, res: Response, next: any) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    return res.status(401).send('Not authenticated');
+  }
+} 

@@ -10,9 +10,10 @@ export interface IAnimal extends Document {
     description: string,
     temperament: string,
     healthInfo: string,
-    images: [string], 
+    images?: [string], 
     available: boolean,
     createdAt: Date
+    animalId: number
 }
 
 const AnimalSchema = new Schema<IAnimal>({
@@ -28,5 +29,7 @@ const AnimalSchema = new Schema<IAnimal>({
     createdAt: { type: Date, default: Date.now }
 });
 
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+(AnimalSchema as any).plugin(AutoIncrement, { inc_field: 'animalId' });
 
 export const Animal: Model<IAnimal> = mongoose.model<IAnimal>('Animal', AnimalSchema);
