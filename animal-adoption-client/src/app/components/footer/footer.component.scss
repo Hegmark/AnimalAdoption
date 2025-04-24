@@ -1,0 +1,39 @@
+.footer {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    background-color: #626F47;
+    color: #FEFAE0;
+    padding: 2rem;
+    font-size: 0.95rem;
+  }
+  
+  .footer-section {
+    flex: 1 1 200px;
+    margin: 1rem;
+  }
+  
+  .footer-section h3 {
+    color: #FFCF50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-section p, .footer-section li {
+    margin: 0.3rem 0;
+  }
+  
+  .footer-section a {
+    color: #FEFAE0;
+    text-decoration: none;
+  }
+  
+  .footer-section a:hover {
+    color: #FFCF50;
+    text-decoration: underline;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  

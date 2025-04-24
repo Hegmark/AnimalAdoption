@@ -1,0 +1,14 @@
+<nav class="header">
+    <div class="title">Örökbefogadás</div>
+    <div class="menu-toggle" (click)="toggleMenu()">☰</div>
+
+    <div class="menu" [class.open]="menuOpen">
+        <a routerLink="/" routerLinkActive="active" (click)="closeMenu()">Kezdőlap</a>
+        <a routerLink="/animals" routerLinkActive="active" (click)="closeMenu()">Állatok</a>
+        <a routerLink="/my-requests" routerLinkActive="active" (click)="closeMenu()">Kérelmeim</a>
+        <a (click)="toggleLogin()">Bejelentkezés</a>
+        <a (click)="toggleRegister()">Regisztráció</a>
+    </div>
+</nav>
+<app-login-modal [isOpen]="loginModalOpen" (closeModal)="toggleLogin()"></app-login-modal>
+<app-register-modal [isOpen]="registerModalOpen" (closeModal)="toggleRegister()"></app-register-modal>

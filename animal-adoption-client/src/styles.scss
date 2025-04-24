@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'variables' as *;
+
+
+.text-primary { color: $color-primary; }
+.text-secondary { color: $color-secondary; }
+.text-accent { color: $color-accent; }
+.text-light { color: $color-background; }
+.text-dark { color: $color-text; }
+
+
+.bg-primary { background-color: $color-primary; }
+.bg-secondary { background-color: $color-secondary; }
+.bg-accent { background-color: $color-accent; }
+.bg-light { background-color: $color-background; }
+
+
+.btn {
+  background-color: $color-accent;
+  color: $color-primary;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $color-accent;
+  }
+}
+
+button,
+input,
+textarea,
+select,
+.card,
+.modal,
+.container,
+nav{
+  border-radius: $border-radius;
+}

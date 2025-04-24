@@ -1,0 +1,12 @@
+<div class="modal-overlay" (click)="close()" *ngIf="isOpen">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Bejelentkezés</h2>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <input type="email" placeholder="Email" required [(ngModel)]="email" name="email" />
+        <input type="password" placeholder="Jelszó" required [(ngModel)]="password" name="password" />
+        <button type="submit">Bejelentkezés</button>
+        <div *ngIf="error" class="error">{{ error }}</div>
+      </form>
+    </div>
+  </div>
+  
