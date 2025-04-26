@@ -1,0 +1,18 @@
+<div class="requests-list">
+    <div 
+      class="request-card" 
+      *ngFor="let request of requests" 
+      (click)="goToAnimal(request.animalId.animalId)">
+      
+      <h2>{{ request.animalId.name }}</h2>
+      <p><strong>Állat fajtája:</strong> {{ request.animalId.breed }}</p>
+      <p><strong>Találkozó időpontja:</strong> {{ request.meetingDate | date:'medium' }}</p>
+      <p><strong>Üzenet:</strong> {{ request.message }}</p>
+      <p><strong>Állapot:</strong> {{ request.status | titlecase }}</p>
+    </div>
+  
+    <div *ngIf="requests.length === 0" class="empty-message">
+      <p>Nincsenek örökbefogadási kérelmeid!</p>
+    </div>
+  </div>
+  

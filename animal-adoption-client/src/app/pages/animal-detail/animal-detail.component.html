@@ -1,0 +1,29 @@
+<div class="animal-detail" *ngIf="animal">
+    <h1>{{ animal.name }}</h1>
+    <p><strong>Faj:</strong> {{ animal.species }}</p>
+    <p><strong>Fajta:</strong> {{ animal.breed }}</p>
+    <p><strong>Kor:</strong> {{ animal.age }} év</p>
+    <p><strong>Leírás:</strong> {{ animal.description }}</p>
+    <p><strong>Természet:</strong> {{ animal.temperament }}</p>
+    <p><strong>Egészségügyi állapot:</strong> {{ animal.healthInfo }}</p>
+    <p><strong>Elérhető:</strong> {{ animal.available ? 'Igen' : 'Nem' }}</p>
+  
+    <div *ngIf="animal.available">
+
+        <div *ngIf="isLoggedIn" class="meeting-form">
+          <h2>Örökbefogadás / Találkozó egyeztetése</h2>
+          <input type="datetime-local" [(ngModel)]="meetingDate">
+          <button (click)="scheduleMeeting()">Időpont foglalása ismerkedésre</button>
+        </div>
+      
+        <div *ngIf="!isLoggedIn" class="login-prompt">
+          <p>Jelentkezz be, hogy örökbefogadási kérelmet nyújthass be!</p>
+        </div>
+      
+      </div>
+      
+      <div *ngIf="!animal.available" class="not-available">
+        <p>Ez az állat már nem elérhető örökbefogadásra.</p>
+      </div>
+  </div>
+  

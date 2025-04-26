@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-modal',
@@ -20,23 +21,26 @@ export class LoginModalComponent {
   password = '';
   error: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   close() {
     this.closeModal.emit();
   }
 
   onSubmit() {
-    this.http.post('/api/auth/login', { email: this.email, password: this.password })
-      .subscribe({
-        next: (res: any) => {
-          localStorage.setItem('token', res.token);
-          this.close();
-          location.reload();
-        },
-        error: () => {
-          this.error = 'Hibás email vagy jelszó.';
-        }
-      });
+    if (!this.email || !this.password) {
+      this.error = 'Kérlek töltsd ki az összes mezőt.';
+      return;
+    }
+
+    this.authService.login(this.email, this.password).subscribe({
+      next: (res) => {
+        this.closeModal.emit();
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Hibás email vagy jelszó.';
+      }
+    });
   }
 }

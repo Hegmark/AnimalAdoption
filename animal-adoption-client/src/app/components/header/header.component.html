@@ -1,13 +1,19 @@
 <nav class="header">
     <div class="title">Örökbefogadás</div>
-    <div class="menu-toggle" (click)="toggleMenu()">☰</div>
+    <div class="hamburger" (click)="toggleMenu()">☰</div>
 
     <div class="menu" [class.open]="menuOpen">
-        <a routerLink="/" routerLinkActive="active" (click)="closeMenu()">Kezdőlap</a>
+        <a routerLink="/news" routerLinkActive="active" (click)="closeMenu()">Kezdőlap</a>
         <a routerLink="/animals" routerLinkActive="active" (click)="closeMenu()">Állatok</a>
-        <a routerLink="/my-requests" routerLinkActive="active" (click)="closeMenu()">Kérelmeim</a>
-        <a (click)="toggleLogin()">Bejelentkezés</a>
-        <a (click)="toggleRegister()">Regisztráció</a>
+        <a *ngIf="isLoggedIn" routerLink="/my-adoptions" routerLinkActive="active" (click)="closeMenu()">Kérelmeim</a>
+        <ng-container *ngIf="!isLoggedIn">
+            <a (click)="toggleLogin()">Bejelentkezés</a>
+            <a (click)="toggleRegister()">Regisztráció</a>
+          </ng-container>
+          <ng-container *ngIf="isLoggedIn">
+            <a routerLink="/favorites" routerLinkActive="active" (click)="closeMenu()">Kedvenceim</a>
+            <a (click)="logout()">Kijelentkezés</a>
+          </ng-container>
     </div>
 </nav>
 <app-login-modal [isOpen]="loginModalOpen" (closeModal)="toggleLogin()"></app-login-modal>

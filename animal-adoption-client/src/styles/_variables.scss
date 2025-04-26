@@ -2,13 +2,19 @@ $color-primary: #626F47;
 $color-secondary: #A4B465;
 $color-accent: #FFCF50;
 $color-background: #FEFAE0;
-$color-text-variant: #FEFAE0;
 $color-text: #2F2F2F;
+$color-text-variant: #FEFAE0;
+$color-text-accent: #FFCF50;
 
 $header-bg: $color-primary;
+$footer-bg: $color-primary;
 $menu-bg: $color-secondary;
 $highlight: $color-accent;
 $page-bg: $color-background;
 $text-color: $color-text;
+$modal-bg: rgba(98, 111, 71, 0.9);
 
 $border-radius: 12px;
+
+
+//  @use 'variables' as *;

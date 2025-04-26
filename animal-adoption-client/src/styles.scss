@@ -38,3 +38,28 @@ select,
 nav{
   border-radius: $border-radius;
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: $page-bg;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.main-content {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+}

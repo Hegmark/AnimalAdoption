@@ -1,0 +1,42 @@
+@use 'variables' as *;
+@use 'sass:color';
+
+.animal-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: $page-bg;
+}
+
+.animal-card {
+  position: relative;
+  background-color: $color-secondary;
+  color: $color-text;
+  padding: 1.5rem;
+  width: 250px;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  h3 {
+    color: $color-accent;
+  }
+
+  .favorite-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 10;
+    user-select: none;
+  }
+}
+
+

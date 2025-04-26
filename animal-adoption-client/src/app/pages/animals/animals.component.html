@@ -1,0 +1,13 @@
+<div class="animal-list">
+    <div class="animal-card" (click)="goToAnimal(animal.animalId)" *ngFor="let animal of animals">
+      <h3>{{ animal.name }}</h3>
+      <p><strong>Faj:</strong> {{ animal.species }}</p>
+      <p><strong>Fajta:</strong> {{ animal.breed }}</p>
+      <p><strong>Kor:</strong> {{ animal.age }} év</p>
+      <div class="favorite-button" (click)="toggleFavorite($event, animal)">
+        <span *ngIf="isFavorite(animal)">❤️</span>
+        <span *ngIf="!isFavorite(animal)">🤍</span>
+      </div>
+    </div>
+  </div>
+  

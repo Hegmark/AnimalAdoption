@@ -1,0 +1,15 @@
+<div class="news-list">
+    <div class="news-card" *ngFor="let news of newsList" (click)="openModal(news)">
+      <h2>{{ news.title }}</h2>
+      <p>{{ news.content.length > 100 ? (news.content | slice:0:100) + '...' : news.content }}</p>
+    </div>
+  </div>
+  
+  <div class="modal" *ngIf="selectedNews" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2>{{ selectedNews.title }}</h2>
+      <p>{{ selectedNews.content }}</p>
+      <button (click)="closeModal()">Bezárás</button>
+    </div>
+  </div>
+  

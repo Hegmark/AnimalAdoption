@@ -7,7 +7,7 @@ export interface IAdoptionRequest extends Document {
     userId: ObjectId,
     status: 'pending' | 'approved' | 'rejected',
     message: string,
-    meetingDate: Date,
+    adoptionDate: Date,
     createdAt: Date,
     adReId: number
 }
@@ -22,7 +22,7 @@ const AdoptionRequestSchema = new Schema<IAdoptionRequest>({
         required: true
     },
     message: { type: String, required: true },
-    meetingDate: { type: Date, required: true },
+    adoptionDate: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now }
 });
 

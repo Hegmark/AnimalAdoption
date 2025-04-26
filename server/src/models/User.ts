@@ -10,6 +10,10 @@ export interface IUser extends Document {
   passwordHash: string;
   role: 'admin' | 'adopter';
   favorites: mongoose.Types.ObjectId[];
+  meetings: {
+    animalId: mongoose.Types.ObjectId;
+    date: Date;
+  }[];
   comparePassword: (
     candidatePassword: string,
     callback: (error: Error | null, isMatch: boolean) => void
@@ -21,7 +25,11 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
   role: { type: String, enum: ['admin', 'adopter'], default: 'adopter' },
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal' }]
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Animal' }],
+  meetings: [{
+    animalId: { type: mongoose.Schema.Types.ObjectId, ref: 'Animal', required: true },
+    date: { type: Date, required: true }
+  }]
 }, { timestamps: true });
 
 

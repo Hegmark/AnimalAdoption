@@ -58,7 +58,16 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
                     console.log(error);
                     res.status(500).send('Internal server error.');
                 }
-                res.status(200).send('Successfully logged out.');
+
+                req.session.destroy(() => {
+                    res.clearCookie('connect.sid', {
+                        path: '/',
+                        sameSite: 'lax',
+                        secure: false
+                    });
+
+                    res.status(200).send('Successfully logged out.');
+                });
             })
         } else {
             res.status(500).send('User is not logged in.');
@@ -68,9 +77,9 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
     router.get('/checkAuth', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
             const user = req.user as IUser;
-            res.status(200).json({ authenticated: true , user: user});
+            res.status(200).json({ authenticated: true });
         } else {
-            res.status(401).json({ authenticated: false });
+            res.status(200).json({ authenticated: false });
         }
     });
 
@@ -79,16 +88,16 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
         const userId = user._id;
         const animalId = req.params.animalId;
 
-        Animal.findOne({animalId: animalId}).then(animal => {
+        Animal.findOne({ animalId: animalId }).then(animal => {
             if (!animal) return res.status(404).send('Animal not found.');
-    
+
             User.findById(userId).then(user => {
                 if (!user) return res.status(404).send('User not found.');
-    
+
                 const alreadyFavorited = user.favorites.some(favId =>
                     favId.toString() === animal._id.toString()
                 );
-    
+
                 if (!alreadyFavorited) {
                     user.favorites.push(animal._id as unknown as mongoose.Types.ObjectId);
                     user.save().then(() => {

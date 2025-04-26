@@ -1,0 +1,61 @@
+@use 'variables' as *;
+
+.animal-detail {
+  background: $color-secondary;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  border-radius: $border-radius;
+  color: $color-text;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
+  h1 {
+    color: $color-accent;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0.5rem 0;
+  }
+
+  .meeting-form {
+    margin-top: 2rem;
+
+    input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: $border-radius;
+      border: 1px solid $color-primary;
+    }
+
+    button {
+      background: $color-accent;
+      color: $color-text;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
+      cursor: pointer;
+    }
+  }
+
+  .login-prompt {
+    margin-top: 2rem;
+    background: $color-accent;
+    padding: 1rem;
+    border-radius: $border-radius;
+    color: $color-text;
+  }
+
+  .not-available {
+    margin-top: 2rem;
+    background: $color-accent;
+    padding: 1rem;
+    border-radius: $border-radius;
+    color: $color-text;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+}
