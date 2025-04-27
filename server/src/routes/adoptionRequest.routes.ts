@@ -9,31 +9,45 @@ import { Animal } from '../models/Animal';
 const router = Router();
 
 router.post('/create', requireRole("adopter"), (req: Request, res: Response) => {
-    const { animalId, message, meetingDate } = req.body;
+    const { animalId, message, adoptionDate } = req.body;
     const user = req.user as IUser;
     const userId = user._id;
 
     Animal.findOne({ animalId: animalId })
         .then(animal => {
             if (!animal) return res.status(404).send('Animal not found.');
-            const newRequest = new AdoptionRequest({
-                animalId: animal._id as unknown as mongoose.Types.ObjectId,
-                userId,
-                message,
-                meetingDate,
-                status: 'pending',
-                createdAt: new Date()
-            });
-            newRequest.save().then(data => res.status(201).send(data))
+
+            AdoptionRequest.findOne({ animalId: animal._id, userId: userId, status: 'pending' })
+                .then(existingRequest => {
+                    if (existingRequest) {
+                        return res.status(400).send('Már van függő örökbefogadási kérelmed ennél az állatnál.');
+                    }
+
+                    const newRequest = new AdoptionRequest({
+                        animalId: animal._id as unknown as mongoose.Types.ObjectId,
+                        userId,
+                        message,
+                        adoptionDate,
+                        status: 'pending',
+                        createdAt: new Date()
+                    });
+
+                    newRequest.save()
+                        .then(data => res.status(201).send(data))
+                        .catch(err => {
+                            console.error(err);
+                            res.status(500).send('Error creating adoption request.');
+                        });
+                })
                 .catch(err => {
                     console.error(err);
-                    res.status(500).send('Error creating adoption request.');
+                    res.status(500).send('Error checking existing adoption requests.');
                 });
-        }).catch(err => {
+        })
+        .catch(err => {
             console.error(err);
-            res.status(500).send('Error creating adoption request.');
-        });;
-
+            res.status(500).send('Error finding animal.');
+        });
 });
 
 router.get('/', requireRole('admin'), (req: Request, res: Response) => {
@@ -86,9 +100,22 @@ router.put('/update/:id', requireRole('admin'), (req: Request, res: Response) =>
     AdoptionRequest.findOneAndUpdate({ adReId: id }, { status }, { new: true })
         .then(data => {
             if (!data) return res.status(404).send('Adoption request not found.');
-            res.status(200).send(data);
-        }).catch(error => {
-            console.log(error);
+
+            if (status === 'approved') {
+                Animal.findByIdAndUpdate(data.animalId, { available: false })
+                    .then(() => {
+                        res.status(200).send(data);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        res.status(500).send('Error updating animal availability.');
+                    });
+            } else {
+                res.status(200).send(data);
+            }
+        })
+        .catch(error => {
+            console.error(error);
             res.status(500).send('Internal server error.');
         });
 });

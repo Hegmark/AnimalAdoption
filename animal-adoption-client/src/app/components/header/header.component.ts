@@ -17,14 +17,20 @@ export class HeaderComponent {
   loginModalOpen = false;
   registerModalOpen = false;
   isLoggedIn = false;
+  isAdmin = false;
+
   private authSub!: Subscription;
+  private roleSub!: Subscription;
 
-
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.authSub = this.authService.isLoggedIn$.subscribe(isLogged => {
       this.isLoggedIn = isLogged;
+    });
+
+    this.roleSub = this.authService.userRole$.subscribe(role => {
+      this.isAdmin = role === 'admin';
     });
 
     this.authService.checkAuth().subscribe();
@@ -45,6 +51,7 @@ export class HeaderComponent {
 
   ngOnDestroy(): void {
     this.authSub.unsubscribe();
+    this.roleSub.unsubscribe();
   }
 
   toggleMenu() {
@@ -64,7 +71,10 @@ export class HeaderComponent {
   }
 
   logout() {
-    this.authService.logout().subscribe();
-    this.router.navigate(['/']);
+    this.authService.logout().subscribe(() => {
+      this.isLoggedIn = false;
+      this.isAdmin = false;
+      this.router.navigate(['/']);
+    });
   }
 }

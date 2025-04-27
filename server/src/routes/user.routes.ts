@@ -14,7 +14,7 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
 
 
     router.post('/login', (req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('local', (error: string | null, user: typeof User) => {
+        passport.authenticate('local', (error: string | null, user: IUser) => {
             if (error) {
                 console.log(error);
                 return res.status(500).send(error);
@@ -27,7 +27,7 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
                             console.log(err);
                             return res.status(500).send('Internal server error.');
                         } else {
-                            return res.status(200).send(user.name);
+                            return res.status(200).send(user.role);
                         }
                     });
                 }
@@ -77,7 +77,7 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
     router.get('/checkAuth', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
             const user = req.user as IUser;
-            res.status(200).json({ authenticated: true });
+            res.status(200).json({ authenticated: true , role: user.role });
         } else {
             res.status(200).json({ authenticated: false });
         }
@@ -155,6 +155,51 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
             console.error(error);
             res.status(500).send('Internal server error.');
         })
+    });
+
+    router.get('/meetings', requireRole("adopter"), (req: Request, res: Response) => {
+        const user = req.user as IUser;
+        const userId = user._id;
+
+        User.findById(userId).populate('meetings.animalId')
+            .then(user => {
+                if (!user) return res.status(404).send('User not found.');
+                res.status(200).send(user.favorites);
+            })
+            .catch(error => {
+                console.error(error);
+                res.status(500).send('Internal server error.');
+            });
+    });
+
+    router.post('/meetings', requireRole("adopter"), (req: Request, res: Response) => {
+        const user = req.user as IUser;
+        const userId = user._id;
+        const animalId = req.params.animalId;
+        const meetingDate = req.body.meetingDate;
+
+        Animal.findOne({ animalId: animalId }).then(animal => {
+            if (!animal) return res.status(404).send('Animal not found.');
+
+            User.findById(userId).then(user => {
+                if (!user) return res.status(404).send('User not found.');
+
+                user.meetings.push({
+                    animalId: animal._id as unknown as mongoose.Types.ObjectId,
+                    date: meetingDate
+                });
+                user.save().then(() => {
+                    res.status(200).send({
+                        message: 'Meeting added.',
+                        meetings: user.meetings
+                    });
+                });
+
+            });
+        }).catch(error => {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        });
     });
 
     return router;

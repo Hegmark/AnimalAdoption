@@ -1,0 +1,31 @@
+<div class="admin-page">
+    <h1>Admin Központ</h1>
+  
+    <div class="card">
+      <h2>Új Hír Létrehozása</h2>
+      <form (ngSubmit)="createNews()">
+        <input type="text" placeholder="Cím" [(ngModel)]="news.title" name="newsTitle" required>
+        <textarea placeholder="Tartalom" [(ngModel)]="news.content" name="newsContent" rows="6" required></textarea>
+        <button type="submit">Hír létrehozása</button>
+      </form>
+    </div>
+  
+    <div class="card">
+      <h2>Új Állat Hozzáadása</h2>
+      <form (ngSubmit)="createAnimal()">
+        <input type="text" placeholder="Név" [(ngModel)]="animal.name" name="animalName" required>
+        <input type="text" placeholder="Faj" [(ngModel)]="animal.species" name="animalSpecies" required>
+        <input type="text" placeholder="Fajta" [(ngModel)]="animal.breed" name="animalBreed" required>
+        <input type="number" placeholder="Kor" [(ngModel)]="animal.age" name="animalAge" required>
+        <textarea placeholder="Leírás" [(ngModel)]="animal.description" name="animalDescription"></textarea>
+        <textarea placeholder="Természet" [(ngModel)]="animal.temperament" name="animalTemperament"></textarea>
+        <textarea placeholder="Egészségügyi állapot" [(ngModel)]="animal.healthInfo" name="animalHealthInfo"></textarea>
+        <label>
+          <input type="checkbox" [(ngModel)]="animal.available" name="animalAvailable">
+          Elérhető örökbefogadásra
+        </label>
+        <button type="submit">Állat létrehozása</button>
+      </form>
+    </div>
+  </div>
+  

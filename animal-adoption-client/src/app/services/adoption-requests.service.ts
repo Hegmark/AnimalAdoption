@@ -12,4 +12,8 @@ export class AdoptionRequestService {
   getMyRequests(): Observable<AdoptionRequest[]> {
     return this.http.get<AdoptionRequest[]>(`${this.apiUrl}/my-requests`, {withCredentials: true});
   }
+
+  createAdoptionRequest(requestData: { animalId: number; message: string; adoptionDate: string; }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, requestData, { withCredentials: true });
+  }
 }

@@ -4,6 +4,8 @@ import { NewsComponent } from './pages/news/news.component';
 import { AnimalDetailComponent } from './pages/animal-detail/animal-detail.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { AdoptionRequestsComponent } from './pages/adoption-requests/adoption-requests.component';
+import { AdminGuard } from './guards/admin.guard';
+import { AdminComponent } from './pages/admin/admin.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'news', pathMatch: 'full' },
@@ -12,5 +14,10 @@ export const routes: Routes = [
     { path: 'animals/:id', component: AnimalDetailComponent },
     { path: 'favorites', component: FavoritesComponent },
     { path : 'my-adoptions', component: AdoptionRequestsComponent},
+    {
+        path: 'admin',
+        component: AdminComponent,
+        canActivate: [AdminGuard] 
+      },
     { path : '**', redirectTo: 'news' }
 ];

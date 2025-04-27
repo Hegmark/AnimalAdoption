@@ -8,7 +8,9 @@ import { BehaviorSubject, tap } from 'rxjs';
 })
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
+  private userRole = new BehaviorSubject<string | null>(null);
   isLoggedIn$ = this.loggedIn.asObservable();
+  userRole$ = this.userRole.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -22,8 +24,11 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post('http://localhost:5000/api/user/login', body, { headers, withCredentials: true }).pipe(
-      tap(() => this.loggedIn.next(true))
+    return this.http.post<any>('http://localhost:5000/api/user/login', body, { headers, withCredentials: true, responseType: 'text' as 'json' }).pipe(
+      tap(res => {
+        this.loggedIn.next(true);
+        this.userRole.next(res);
+      })
     );
   }
 
@@ -37,18 +42,24 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post('http://localhost:5000/api/user/register', body, {headers: headers, withCredentials: true});
+    return this.http.post('http://localhost:5000/api/user/register', body, { headers: headers, withCredentials: true });
   }
 
   checkAuth() {
     return this.http.get<any>('http://localhost:5000/api/user/checkAuth', { withCredentials: true }).pipe(
-      tap(res => this.loggedIn.next(res.authenticated))
+      tap(res => { 
+        this.loggedIn.next(res.authenticated); 
+        this.userRole.next(res.role);
+      }),
     );
   }
 
   logout() {
-    return this.http.post('http://localhost:5000/api/user/logout', {}, { withCredentials: true, responseType: 'text' as 'json'}).pipe(
-      tap(() => this.loggedIn.next(false))
+    return this.http.post('http://localhost:5000/api/user/logout', {}, { withCredentials: true, responseType: 'text' as 'json' }).pipe(
+      tap(() => {
+        this.loggedIn.next(false);
+        this.userRole.next(null);
+      })
     );
   }
 }

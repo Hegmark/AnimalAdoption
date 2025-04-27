@@ -1,13 +1,45 @@
 <div class="animal-list">
-    <div class="animal-card" (click)="goToAnimal(animal.animalId)" *ngFor="let animal of animals">
-      <h3>{{ animal.name }}</h3>
-      <p><strong>Faj:</strong> {{ animal.species }}</p>
-      <p><strong>Fajta:</strong> {{ animal.breed }}</p>
-      <p><strong>Kor:</strong> {{ animal.age }} év</p>
-      <div class="favorite-button" (click)="toggleFavorite($event, animal)">
+  <div class="animal-card" *ngFor="let animal of animals" (click)="goToAnimal(animal.animalId)">
+    <h3>{{ animal.name }}</h3>
+    <p><strong>Faj:</strong> {{ animal.species }}</p>
+    <p><strong>Fajta:</strong> {{ animal.breed }}</p>
+    <p><strong>Kor:</strong> {{ animal.age }} év</p>
+
+    <div class="favorite-button" (click)="handleButtonClick($event, animal)">
+      <ng-container *ngIf="isAdmin; else userFavorites">
+        🛠️
+      </ng-container>
+      <ng-template #userFavorites>
         <span *ngIf="isFavorite(animal)">❤️</span>
         <span *ngIf="!isFavorite(animal)">🤍</span>
-      </div>
+      </ng-template>
     </div>
   </div>
-  
+</div>
+
+<div *ngIf="adminEditModalOpen" class="modal-backdrop" (click)="closeAdminModal()">
+  <div class="admin-modal" (click)="$event.stopPropagation()">
+    <h2>Állat Szerkesztése</h2>
+
+    <form (ngSubmit)="saveAnimalChanges()">
+      <input type="text" [(ngModel)]="editAnimal.name" name="name" placeholder="Név">
+      <input type="text" [(ngModel)]="editAnimal.species" name="species" placeholder="Faj">
+      <input type="text" [(ngModel)]="editAnimal.breed" name="breed" placeholder="Fajta">
+      <input type="number" [(ngModel)]="editAnimal.age" name="age" placeholder="Kor">
+      <textarea [(ngModel)]="editAnimal.description" name="description" placeholder="Leírás"></textarea>
+      <textarea [(ngModel)]="editAnimal.temperament" name="temperament" placeholder="Természet"></textarea>
+      <textarea [(ngModel)]="editAnimal.healthInfo" name="healthInfo" placeholder="Egészségügyi állapot"></textarea>
+      
+      <label>
+        <input type="checkbox" [(ngModel)]="editAnimal.available" name="available">
+        Elérhető örökbefogadásra
+      </label>
+
+      <div class="modal-buttons">
+        <button type="submit">Mentés</button>
+        <button type="button" (click)="deleteAnimal()">Törlés</button>
+        <button type="button" (click)="closeAdminModal()">Bezárás</button>
+      </div>
+    </form>
+  </div>
+</div>

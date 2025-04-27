@@ -12,8 +12,9 @@
 
         <div *ngIf="isLoggedIn" class="meeting-form">
           <h2>Örökbefogadás / Találkozó egyeztetése</h2>
-          <input type="datetime-local" [(ngModel)]="meetingDate">
+          <input type="date" [(ngModel)]="meetingDate" [min]="today">
           <button (click)="scheduleMeeting()">Időpont foglalása ismerkedésre</button>
+          <button (click)="openAdoptModal()">Örökbefogadás</button>
         </div>
       
         <div *ngIf="!isLoggedIn" class="login-prompt">
@@ -25,5 +26,21 @@
       <div *ngIf="!animal.available" class="not-available">
         <p>Ez az állat már nem elérhető örökbefogadásra.</p>
       </div>
+  </div>
+
+  <div class="adopt-modal" *ngIf="adoptModalOpen">
+    <div class="adopt-modal-content">
+      <h2>Örökbefogadási Kérelem</h2>
+      <form (ngSubmit)="submitAdoptionRequest()">
+        <label for="adoptionDate">Örökbefogadás időpontja:</label>
+        <input id="adoptionDate" type="date" [(ngModel)]="adoptionDate" name="adoptionDate" required [min]="today">
+  
+        <label for="message">Üzenet:</label>
+        <textarea id="message" [(ngModel)]="adoptionMessage" name="message" placeholder="Írj valamit az örökbefogadásról..." required></textarea>
+  
+        <button type="submit">Küldés</button>
+        <button type="button" (click)="closeAdoptModal()">Mégse</button>
+      </form>
+    </div>
   </div>
   
