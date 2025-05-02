@@ -24,6 +24,7 @@ export class AnimalDetailComponent implements OnInit {
   adoptionDate: string = '';
   adoptionMessage: string = '';
   today: string = '';
+  existingRequest = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +51,16 @@ export class AnimalDetailComponent implements OnInit {
     this.authService.userRole$.subscribe(role => {
       this.isAdmin = role === 'admin';
     });
+
+    if (this.isLoggedIn) {
+      this.adoptionRequestService.getMyRequests().subscribe({
+        next: requests => {
+          this.existingRequest = requests
+            .some(r => r.animalId.animalId === this.animal?.animalId);
+        },
+        error: err => console.error('Could not load your requests', err)
+      });
+    }
 
     const today = new Date();
     const yyyy = today.getFullYear();

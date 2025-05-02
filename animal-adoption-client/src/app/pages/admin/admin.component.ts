@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { AdminService } from '../../services/admin.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { News } from '../../models/news';
 import { Animal } from '../../models/animal';
 import { AnimalService } from '../../services/animal.service';
+import { AdoptionRequest, AdoptionRequestPopulated } from '../../models/adoption-request';
+import { AdoptionRequestService } from '../../services/adoption-requests.service';
 
 @Component({
   selector: 'app-admin',
@@ -30,8 +31,20 @@ export class AdminComponent {
     animalId: 0
   }
 
+  requests: AdoptionRequestPopulated[] = [];
+  requestModalOpen = false;
+  selectedRequest: AdoptionRequestPopulated | null = null;
 
-  constructor(private adminService: AdminService, private router: Router, private animalService: AnimalService) {}
+
+  constructor(
+    private adminService: AdminService,
+    private animalService: AnimalService,
+    private requestService: AdoptionRequestService
+  ) { }
+
+  ngOnInit() {
+    this.loadRequests();
+  }
 
   createNews() {
     if (!this.news.title || !this.news.content) {
@@ -77,5 +90,60 @@ export class AdminComponent {
     this.animal.temperament = '';
     this.animal.healthInfo = '';
     this.animal.available = true;
+  }
+
+  loadRequests() {
+    this.requestService.getAllRequests().subscribe({
+      next: data => this.requests = data,
+      error: err => console.error('Cannot load requests', err)
+    });
+  }
+
+  openRequestModal(req: AdoptionRequestPopulated) {
+    this.selectedRequest = req;
+    this.requestModalOpen = true;
+  }
+  closeRequestModal() {
+    this.requestModalOpen = false;
+    this.selectedRequest = null;
+  }
+
+  approve() {
+    if (!this.selectedRequest) return;
+    this.requestService.updateRequest(this.selectedRequest.adReId, 'approved')
+      .subscribe({
+        next: () => {
+          alert('Kérelem jóváhagyva');
+          this.closeRequestModal();
+          this.loadRequests();
+        },
+        error: err => console.error(err)
+      });
+  }
+
+  deny() {
+    if (!this.selectedRequest) return;
+    this.requestService.updateRequest(this.selectedRequest.adReId, 'rejected')
+      .subscribe({
+        next: () => {
+          alert('Kérelem elutasítva');
+          this.closeRequestModal();
+          this.loadRequests();
+        },
+        error: err => console.error(err)
+      });
+  }
+
+  delete() {
+    if (!this.selectedRequest) return;
+    this.requestService.deleteRequest(this.selectedRequest.adReId)
+      .subscribe({
+        next: () => {
+          alert('Kérelem törölve');
+          this.closeRequestModal();
+          this.loadRequests();
+        },
+        error: err => console.error(err)
+      });
   }
 }

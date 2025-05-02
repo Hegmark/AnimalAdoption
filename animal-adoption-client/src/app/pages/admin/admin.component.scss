@@ -55,11 +55,58 @@
         border-radius: $border-radius;
         cursor: pointer;
         align-self: flex-start;
-
+        color: $color-text;
         &:hover {
             background-color: color.adjust($color-accent, $lightness: -10%);
         }
       }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th, td {
+      border: 1px solid $color-primary;
+      padding: 0.5rem;
+    }
+
+    th { background: $color-secondary; color: $color-background; }
+
+    tbody tr {
+      cursor: pointer;
+      &:hover { background: rgba($color-accent, 0.1); }
+    }
+  }
+}
+
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.modal {
+  background: $color-background;
+  padding: 2rem;
+  border-radius: $border-radius;
+  width: 400px;
+  max-width: 90%;
+  .modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+      &:first-child { background: green; color: white; }
+      &:nth-child(2) { background: red; color: white; }
+      &:nth-child(3) { background: gray; color: white; }
+      &:last-child { background: gray; color: white; }
     }
   }
 }

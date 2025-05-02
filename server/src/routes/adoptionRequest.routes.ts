@@ -53,7 +53,7 @@ router.post('/create', requireRole("adopter"), (req: Request, res: Response) => 
 router.get('/', requireRole('admin'), (req: Request, res: Response) => {
     AdoptionRequest.find()
         .populate('animalId')
-        .populate('userId')
+        .populate('userId', 'username email')
         .then(data => res.status(200).send(data))
         .catch(err => {
             console.error(err);
@@ -82,7 +82,7 @@ router.get('/my-requests', requireRole('adopter'), (req: Request, res: Response)
     const user = req.user as IUser;
     const userId = user._id;
 
-    AdoptionRequest.find({ userId : userId })
+    AdoptionRequest.find({ userId: userId })
         .populate('animalId')
         .then(data => {
             res.status(200).send(data);
@@ -101,18 +101,16 @@ router.put('/update/:id', requireRole('admin'), (req: Request, res: Response) =>
         .then(data => {
             if (!data) return res.status(404).send('Adoption request not found.');
 
-            if (status === 'approved') {
-                Animal.findByIdAndUpdate(data.animalId, { available: false })
-                    .then(() => {
-                        res.status(200).send(data);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        res.status(500).send('Error updating animal availability.');
-                    });
-            } else {
-                res.status(200).send(data);
-            }
+            const availability = !(status === 'approved')
+            Animal.findByIdAndUpdate(data.animalId, { available: availability })
+                .then(() => {
+                    res.status(200).send(data);
+                })
+                .catch(err => {
+                    console.error(err);
+                    res.status(500).send('Error updating animal availability.');
+                });
+            res.status(200).send(data);
         })
         .catch(error => {
             console.error(error);
@@ -127,7 +125,7 @@ router.get('/:id', requireAuthentication(), (req: Request, res: Response) => {
         .then(adoptionRequest => {
             if (!adoptionRequest) return res.status(404).send('Request not found.');
             const user = req.user as IUser;
-            if(!(adoptionRequest.userId.toString() === user._id.toString()) && user.role !== 'admin') {
+            if (!(adoptionRequest.userId.toString() === user._id.toString()) && user.role !== 'admin') {
                 return res.status(403).send('You do not have permission to view this request.');
             }
             res.status(200).send(adoptionRequest);

@@ -11,7 +11,6 @@ export const AdminGuard: CanActivateFn = (route, state) => {
       filter(role => role !== null), 
       take(1),
       map(role => {
-        console.log('Guard finally checked role:', role);
         if (role === 'admin') {
           return true;
         } else {

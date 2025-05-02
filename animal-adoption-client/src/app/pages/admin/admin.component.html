@@ -27,5 +27,50 @@
         <button type="submit">Állat létrehozása</button>
       </form>
     </div>
+
+    <div class="card requests-card">
+      <h2>Örökbefogadási Kérelmek</h2>
+      <table *ngIf="requests.length > 0; else noRequests">
+        <thead>
+          <tr>
+            <th>Örökbefogadó</th>
+            <th>Állat</th>
+            <th>Üzenet</th>
+            <th>Találkozó dátuma</th>
+            <th>Státusz</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of requests" (click)="openRequestModal(r)">
+            <td>{{ r.userId.username }}</td>
+            <td>{{ r.animalId.name }}</td>
+            <td>{{ r.message }}</td>
+            <td>{{ r.adoptionDate | date:'yyyy. MM dd.' }}</td>
+            <td>{{ r.status | titlecase }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #noRequests>
+        <p>Nincsenek új kérelmek.</p>
+      </ng-template>
+    </div>
+  </div>
+  
+  <div class="modal-backdrop" *ngIf="requestModalOpen && selectedRequest" (click)="closeRequestModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Kérelem részletei</h2>
+      <p><strong>Örökbefogadó:</strong> {{ selectedRequest.userId.username }}</p>
+      <p><strong>Email címe:</strong> {{ selectedRequest.userId.email }}</p>
+      <p><strong>Állat:</strong> {{ selectedRequest.animalId.name }}</p>
+      <p><strong>Üzenet:</strong> {{ selectedRequest.message }}</p>
+      <p><strong>Találkozó:</strong> {{ selectedRequest.adoptionDate | date:'yyyy. MM dd.' }}</p>
+      <p><strong>Státusz:</strong> {{ selectedRequest.status | titlecase }}</p>
+      <div class="modal-buttons">
+        <button (click)="approve()">Jóváhagy</button>
+        <button (click)="deny()">Elutasít</button>
+        <button (click)="delete()">Törlés</button>
+        <button (click)="closeRequestModal()">Bezárás</button>
+      </div>
+    </div>
   </div>
   

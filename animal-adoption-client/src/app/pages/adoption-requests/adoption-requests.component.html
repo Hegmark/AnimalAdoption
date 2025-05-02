@@ -6,7 +6,7 @@
       
       <h2>{{ request.animalId.name }}</h2>
       <p><strong>Állat fajtája:</strong> {{ request.animalId.breed }}</p>
-      <p><strong>Találkozó időpontja:</strong> {{ request.meetingDate | date:'medium' }}</p>
+      <p><strong>Örökbefogadás időpontja:</strong> {{ request.adoptionDate | date:'yyyy. MM dd.' }}</p>
       <p><strong>Üzenet:</strong> {{ request.message }}</p>
       <p><strong>Állapot:</strong> {{ request.status | titlecase }}</p>
     </div>

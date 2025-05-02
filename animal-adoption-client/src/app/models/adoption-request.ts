@@ -6,7 +6,21 @@ export interface AdoptionRequest {
   userId: string;
   status: 'pending' | 'approved' | 'rejected';
   message: string;
-  meetingDate: Date;
+  adoptionDate: Date;
   createdAt: Date;
   adReId: number;
+}
+
+export interface AdoptionRequestPopulated {
+  _id: string;
+  adReId: number;
+  message: string;
+  adoptionDate: Date;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: Date;
+  animalId: Animal;
+  userId: {
+    username: string;
+    email: string;
+  };
 }
