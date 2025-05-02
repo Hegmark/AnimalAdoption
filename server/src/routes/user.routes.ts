@@ -164,7 +164,7 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
         User.findById(userId).populate('meetings.animalId')
             .then(user => {
                 if (!user) return res.status(404).send('User not found.');
-                res.status(200).send(user.favorites);
+                res.status(200).send(user.meetings);
             })
             .catch(error => {
                 console.error(error);
@@ -175,8 +175,9 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
     router.post('/meetings', requireRole("adopter"), (req: Request, res: Response) => {
         const user = req.user as IUser;
         const userId = user._id;
-        const animalId = req.params.animalId;
-        const meetingDate = req.body.meetingDate;
+        const animalId = req.body.animalId;
+        const meetingDate =  new Date(req.body.date + 'T00:00:00.000Z');;
+
 
         Animal.findOne({ animalId: animalId }).then(animal => {
             if (!animal) return res.status(404).send('Animal not found.');

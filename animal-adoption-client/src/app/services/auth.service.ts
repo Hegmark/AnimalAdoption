@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Meeting } from '../models/meetings';
 
 
 @Injectable({
@@ -47,8 +48,8 @@ export class AuthService {
 
   checkAuth() {
     return this.http.get<any>('http://localhost:5000/api/user/checkAuth', { withCredentials: true }).pipe(
-      tap(res => { 
-        this.loggedIn.next(res.authenticated); 
+      tap(res => {
+        this.loggedIn.next(res.authenticated);
         this.userRole.next(res.role);
       }),
     );
@@ -61,5 +62,17 @@ export class AuthService {
         this.userRole.next(null);
       })
     );
+  }
+
+  getMeetings(): Observable<Meeting[]> {
+    return this.http.get<Meeting[]>(`http://localhost:5000/api/user/meetings`, {
+      withCredentials: true
+    });
+  }
+
+  createMeetings(meeting: { animalId: number, date: string; }): Observable<any> {
+    return this.http.post<Meeting>(`http://localhost:5000/api/user/meetings`, meeting, {
+      withCredentials: true
+    });
   }
 }

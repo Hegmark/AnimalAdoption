@@ -1,0 +1,26 @@
+<div class="meetings-page">
+  <h1>Találkozóim</h1>
+
+  <table *ngIf="meetings.length > 0; else noMeetings">
+    <thead>
+      <tr>
+        <th>Állat</th>
+        <th>Dátum</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of meetings">
+        <td>
+          <a (click)="goToAnimal(m.animalId.animalId)">
+            {{ m.animalId.name }}
+          </a>
+        </td>
+        <td>{{ m.date | date:'yyyy. MMMM dd.' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noMeetings>
+    <p class="empty">Nincsenek ütemezett találkozóid.</p>
+  </ng-template>
+</div>

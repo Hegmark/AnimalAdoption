@@ -17,8 +17,8 @@ import { AdoptionRequestService } from '../../services/adoption-requests.service
 export class AnimalDetailComponent implements OnInit {
   animal: Animal | null = null;
   isLoggedIn = false;
+  isAdmin = false;
   meetingDate: string = '';
-  message: string = '';
   private authSub!: Subscription;
   adoptModalOpen = false;
   adoptionDate: string = '';
@@ -47,6 +47,10 @@ export class AnimalDetailComponent implements OnInit {
       this.isLoggedIn = isLogged;
     });
 
+    this.authService.userRole$.subscribe(role => {
+      this.isAdmin = role === 'admin';
+    });
+
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -69,12 +73,18 @@ export class AnimalDetailComponent implements OnInit {
       alert('Kérlek válassz időpontot!');
       return;
     }
-
-    // Here you would call AdoptionRequestService to create a request
-    alert(`Találkozó időpont lefoglalva: ${this.meetingDate} üzenettel: "${this.message}"`);
-    // After real backend call, reset fields
+    this.authService.createMeetings({ animalId: this.animal?.animalId!, date: this.meetingDate.toString() }).subscribe({
+      next: (response) => {
+        alert('Találkozó sikeresen ütemezve!');
+        this.meetingDate = '';
+      },
+      error: (err) => {
+        console.error('Failed to schedule meeting', err);
+        alert('Hiba történt a találkozó ütemezésekor.');
+      }
+    });
+    
     this.meetingDate = '';
-    this.message = '';
   }
 
   submitAdoptionRequest() {

@@ -1,0 +1,44 @@
+@use 'variables' as *;
+
+.meetings-page {
+  padding: 2rem;
+
+  h1 {
+    color: $color-accent;
+    margin-bottom: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+
+    th, td {
+      border: 1px solid $color-primary;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: $color-secondary;
+      color: $color-background;
+    }
+
+    tbody tr:hover {
+      background-color: rgba($color-accent, 0.1);
+      cursor: pointer;
+    }
+
+    a {
+      color: $color-primary;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .empty {
+    color: $color-text;
+  }
+}

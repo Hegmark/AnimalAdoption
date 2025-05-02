@@ -27,7 +27,7 @@ export class AnimalService {
   }
 
   deleteAnimal(animalId: number): Observable<any> {
-    return this.http.delete<Animal>(`${this.apiUrl}/${animalId}`, { withCredentials: true });
+    return this.http.delete<Animal>(`${this.apiUrl}/${animalId}`, { withCredentials: true , responseType: 'text' as 'json'});
   }
 
   addToFavorites(animalId: number): Observable<any> {

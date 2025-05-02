@@ -14,6 +14,7 @@
       <ng-container *ngIf="!isAdmin">
         <a routerLink="/favorites" routerLinkActive="active" (click)="closeMenu()">Kedvenceim</a>
         <a routerLink="/my-adoptions" routerLinkActive="active" (click)="closeMenu()">Kérelmeim</a>
+        <a routerLink="/meetings" routerLinkActive="active" (click)="closeMenu()">Találkozók</a>
       </ng-container>
 
       <a (click)="logout()">Kijelentkezés</a>

@@ -10,14 +10,14 @@
   
     <div *ngIf="animal.available">
 
-        <div *ngIf="isLoggedIn" class="meeting-form">
+        <div *ngIf="isLoggedIn && !isAdmin" class="meeting-form">
           <h2>Örökbefogadás / Találkozó egyeztetése</h2>
           <input type="date" [(ngModel)]="meetingDate" [min]="today">
           <button (click)="scheduleMeeting()">Időpont foglalása ismerkedésre</button>
           <button (click)="openAdoptModal()">Örökbefogadás</button>
         </div>
       
-        <div *ngIf="!isLoggedIn" class="login-prompt">
+        <div *ngIf="!isLoggedIn && !isAdmin" class="login-prompt">
           <p>Jelentkezz be, hogy örökbefogadási kérelmet nyújthass be!</p>
         </div>
       
