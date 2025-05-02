@@ -11,6 +11,7 @@ import { userRoutes } from './routes/user.routes';
 import newsRoutes from './routes/news.routes';
 import animalRoutes from './routes/animal.routes';
 import adoptionRoutes from './routes/adoptionRequest.routes';
+import path from 'path';
 
 
 const app = express();
@@ -55,10 +56,19 @@ app.use(passport.session());
 
 configurePassport(passport);
 
+const UPLOADS_DIR = path.resolve(__dirname, '../uploads');
+app.use(
+    '/uploads',
+    express.static(UPLOADS_DIR, {
+      fallthrough: false 
+    })
+  );
+
 app.use('/api/user', userRoutes(passport, Router()));
 app.use('/api/news', newsRoutes);
 app.use('/api/animals', animalRoutes);
 app.use('/api/adoption', adoptionRoutes);
+
 
 
 app.listen(port, () => {

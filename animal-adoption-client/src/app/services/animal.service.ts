@@ -10,8 +10,21 @@ export class AnimalService {
 
   constructor(private http: HttpClient) {}
 
-  createAnimal(animal: Animal): Observable<any> {
-    return this.http.post<Animal>(`${this.apiUrl}/create`, animal, { withCredentials: true });
+  createAnimal(animal: Animal, imageFile?: File): Observable<any> {
+    const form = new FormData();
+    form.append('name', animal.name);
+    form.append('species', animal.species);
+    form.append('breed', animal.breed);
+    form.append('age', animal.age.toString());
+    form.append('description', animal.description);
+    form.append('temperament', animal.temperament);
+    form.append('healthInfo', animal.healthInfo);
+    form.append('available', animal.available ? 'true' : 'false');
+    if (imageFile) {
+      form.append('image', imageFile);
+    }
+
+    return this.http.post<Animal>(`${this.apiUrl}/create`, form, { withCredentials: true });
   }
 
   getAllAnimals(): Observable<any[]> {

@@ -95,3 +95,10 @@ button {
   border-radius: $border-radius;
   margin-top: 1rem;
 }
+
+.animal-photo {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}

@@ -7,6 +7,10 @@
   <p><strong>Természet:</strong> {{ animal.temperament }}</p>
   <p><strong>Egészségügyi állapot:</strong> {{ animal.healthInfo }}</p>
   <p><strong>Elérhető:</strong> {{ animal.available ? 'Igen' : 'Nem' }}</p>
+  <img *ngIf="animal.images && animal.images?.length"
+       [src]="'http://localhost:5000' + animal.images[0]"
+       alt="{{ animal.name }}"
+       class="animal-photo">
 
   <div *ngIf="animal.available">
 

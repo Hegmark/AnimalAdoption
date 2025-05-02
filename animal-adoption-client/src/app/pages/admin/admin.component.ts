@@ -35,6 +35,8 @@ export class AdminComponent {
   requestModalOpen = false;
   selectedRequest: AdoptionRequestPopulated | null = null;
 
+  imageFile?: File;
+
 
   constructor(
     private adminService: AdminService,
@@ -57,7 +59,9 @@ export class AdminComponent {
       content: this.news.content
     }).subscribe({
       next: () => {
-        alert('Hírek sikeresen létrehozva!');
+        alert('Hír sikeresen létrehozva!');
+        this.news.content = '';
+        this.news.title = '';
       },
       error: (err) => {
         console.error('Failed to create news', err);
@@ -72,7 +76,7 @@ export class AdminComponent {
       return;
     }
 
-    this.animalService.createAnimal(this.animal).subscribe({
+    this.animalService.createAnimal(this.animal, this.imageFile).subscribe({
       next: () => {
         alert('Állat sikeresen létrehozva!');
         this.clearAnimalForm();
@@ -145,5 +149,12 @@ export class AdminComponent {
         },
         error: err => console.error(err)
       });
+  }
+
+  onFileSelected(ev: Event) {
+    const inp = ev.target as HTMLInputElement;
+    if (inp.files?.length) {
+      this.imageFile = inp.files[0];
+    }
   }
 }
