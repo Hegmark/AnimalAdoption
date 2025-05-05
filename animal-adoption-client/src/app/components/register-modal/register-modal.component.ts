@@ -37,6 +37,7 @@ export class RegisterModalComponent {
     this.authService.register(this.username, this.email, this.password).subscribe({
       next: (res) => {
         this.closeModal.emit();
+        this.authService.login(this.email, this.password).subscribe();
       },
       error: (err) => {
         console.error(err);

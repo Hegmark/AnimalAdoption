@@ -110,7 +110,6 @@ router.put('/update/:id', requireRole('admin'), (req: Request, res: Response) =>
                     console.error(err);
                     res.status(500).send('Error updating animal availability.');
                 });
-            res.status(200).send(data);
         })
         .catch(error => {
             console.error(error);

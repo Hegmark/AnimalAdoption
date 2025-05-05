@@ -46,21 +46,21 @@ export class AnimalDetailComponent implements OnInit {
 
     this.authSub = this.authService.isLoggedIn$.subscribe(isLogged => {
       this.isLoggedIn = isLogged;
+
+      if (this.isLoggedIn) {
+        this.adoptionRequestService.getMyRequests().subscribe({
+          next: requests => {
+            this.existingRequest = requests
+              .some(r => r.animalId.animalId === this.animal?.animalId && r.status !== 'rejected');
+          },
+          error: err => console.error('Could not load your requests', err)
+        });
+      }
     });
 
     this.authService.userRole$.subscribe(role => {
       this.isAdmin = role === 'admin';
     });
-
-    if (this.isLoggedIn) {
-      this.adoptionRequestService.getMyRequests().subscribe({
-        next: requests => {
-          this.existingRequest = requests
-            .some(r => r.animalId.animalId === this.animal?.animalId);
-        },
-        error: err => console.error('Could not load your requests', err)
-      });
-    }
 
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -112,6 +112,7 @@ export class AnimalDetailComponent implements OnInit {
       next: () => {
         alert('Örökbefogadási kérelem sikeresen elküldve!');
         this.closeAdoptModal();
+        this.existingRequest = true;
       },
       error: (err) => {
         console.error('Failed to create adoption request', err);

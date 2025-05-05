@@ -51,4 +51,22 @@ A MongoDB adatbázis **4 kollekciót** tartalmaz:
 
 ## Telepítés és futtatás
 
-*(Ide írd be a telepítés és futtatás lépéseit.)*
+1. **Előkészítés**
+   - Legyen telepítve: Node.js, npm, Angular CLI.
+   - Szerezz egy működő MongoDB‑kapcsolati URI‑t.
+
+2. **Szerver‑oldal (mappa: `server`)**
+   - Hozz létre egy `.env` fájlt, benne:  
+     `MONGODB_URI=<mongodb_uri>`
+   - npm install
+   - npm run build
+   - npm start
+
+3. **Kliens‑oldal (mappa: `animal-adoption-client`)**
+   - npm install
+   - ng serve
+
+4. **Használat**
+   - A böngészőben nyisd meg: `http://localhost:4200`.
+   - A frontend a háttérben a `http://localhost:5000`‑on futó API‑hoz kapcsolódik, ezért a két folyamat fusson párhuzamosan.
+   - Friss adatbázisnál admin felhasználóhoz először regisztrálni kell egy felhasználót, majd az adatbázisban átírni a `role`-t `adopter`-ről `admin`-ra.

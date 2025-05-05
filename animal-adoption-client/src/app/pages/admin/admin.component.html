@@ -58,7 +58,34 @@
         <p>Nincsenek új kérelmek.</p>
       </ng-template>
     </div>
+
+    <div class="card meetings-card">
+      <h2>Ütemezett Találkozók</h2>
+    
+      <table *ngIf="meetings.length; else noMeetings">
+        <thead>
+          <tr>
+            <th>Felhasználó</th>
+            <th>Állat</th>
+            <th>Dátum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of meetings">
+            <td>{{ m.username }}</td>
+            <td>{{ m.animalName }}</td>
+            <td>{{ m.date | date:'yyyy. MMMM dd.' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    
+      <ng-template #noMeetings>
+        <p>Nincsenek közelgő találkozók.</p>
+      </ng-template>
+    </div>
   </div>
+
+  
   
   <div class="modal-backdrop" *ngIf="requestModalOpen && selectedRequest" (click)="closeRequestModal()">
     <div class="modal" (click)="$event.stopPropagation()">
@@ -67,7 +94,7 @@
       <p><strong>Email címe:</strong> {{ selectedRequest.userId.email }}</p>
       <p><strong>Állat:</strong> {{ selectedRequest.animalId.name }}</p>
       <p><strong>Üzenet:</strong> {{ selectedRequest.message }}</p>
-      <p><strong>Találkozó:</strong> {{ selectedRequest.adoptionDate | date:'yyyy. MM dd.' }}</p>
+      <p><strong>Örökbefogadás dátuma:</strong> {{ selectedRequest.adoptionDate | date:'yyyy. MM dd.' }}</p>
       <p><strong>Státusz:</strong> {{ selectedRequest.status | titlecase }}</p>
       <div class="modal-buttons">
         <button (click)="approve()">Jóváhagy</button>

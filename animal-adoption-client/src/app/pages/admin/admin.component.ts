@@ -7,6 +7,7 @@ import { Animal } from '../../models/animal';
 import { AnimalService } from '../../services/animal.service';
 import { AdoptionRequest, AdoptionRequestPopulated } from '../../models/adoption-request';
 import { AdoptionRequestService } from '../../services/adoption-requests.service';
+import { AdminMeeting } from '../../models/meetings';
 
 @Component({
   selector: 'app-admin',
@@ -37,6 +38,7 @@ export class AdminComponent {
 
   imageFile?: File;
 
+  meetings: AdminMeeting[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -46,6 +48,7 @@ export class AdminComponent {
 
   ngOnInit() {
     this.loadRequests();
+    this.loadMeetings();
   }
 
   createNews() {
@@ -100,6 +103,13 @@ export class AdminComponent {
     this.requestService.getAllRequests().subscribe({
       next: data => this.requests = data,
       error: err => console.error('Cannot load requests', err)
+    });
+  }
+
+  private loadMeetings() {
+    this.adminService.getUpcomingMeetings().subscribe({
+      next: data => this.meetings = data,
+      error: err => console.error('Nem sikerült betölteni a találkozókat', err)
     });
   }
 
@@ -158,3 +168,5 @@ export class AdminComponent {
     }
   }
 }
+
+

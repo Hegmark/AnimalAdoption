@@ -7,10 +7,8 @@
   <p><strong>Természet:</strong> {{ animal.temperament }}</p>
   <p><strong>Egészségügyi állapot:</strong> {{ animal.healthInfo }}</p>
   <p><strong>Elérhető:</strong> {{ animal.available ? 'Igen' : 'Nem' }}</p>
-  <img *ngIf="animal.images && animal.images?.length"
-       [src]="'http://localhost:5000' + animal.images[0]"
-       alt="{{ animal.name }}"
-       class="animal-photo">
+  <img *ngIf="animal.images && animal.images?.length" [src]="'http://localhost:5000' + animal.images[0]"
+    alt="{{ animal.name }}" class="animal-photo">
 
   <div *ngIf="animal.available">
 
@@ -18,9 +16,9 @@
       <h2>Találkozó egyeztetése</h2>
       <input type="date" [(ngModel)]="meetingDate" [min]="today">
       <button (click)="scheduleMeeting()">Időpont foglalása ismerkedésre</button><br>
-      <ng-template *ngIf="!existingRequest; else alreadyRequested">
+      <ng-container *ngIf="!existingRequest; else alreadyRequested">
         <button (click)="openAdoptModal()">Örökbefogadás</button>
-      </ng-template>
+      </ng-container>
       <ng-template #alreadyRequested>
         <p class="already-requested">Örökbefogadási kérelem már benyújtva!</p>
       </ng-template>
@@ -42,14 +40,16 @@
     <h2>Örökbefogadási Kérelem</h2>
     <form (ngSubmit)="submitAdoptionRequest()">
       <label for="adoptionDate">Örökbefogadás időpontja:</label>
-      <input id="adoptionDate" type="date" [(ngModel)]="adoptionDate" name="adoptionDate" required [min]="today">
+      <input id="adoptionDate" type="date" [(ngModel)]="adoptionDate" name="adoptionDate" required [min]="today" />
 
       <label for="message">Üzenet:</label>
       <textarea id="message" [(ngModel)]="adoptionMessage" name="message"
         placeholder="Írj valamit az örökbefogadásról..." required></textarea>
 
-      <button type="submit">Küldés</button>
-      <button type="button" (click)="closeAdoptModal()">Mégse</button>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="closeAdoptModal()">Mégse</button>
+        <button type="submit" class="primary">Küldés</button>
+      </div>
     </form>
   </div>
 </div>

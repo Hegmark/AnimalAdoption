@@ -77,7 +77,7 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
     router.get('/checkAuth', (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
             const user = req.user as IUser;
-            res.status(200).json({ authenticated: true , role: user.role });
+            res.status(200).json({ authenticated: true, role: user.role });
         } else {
             res.status(200).json({ authenticated: false });
         }
@@ -172,11 +172,50 @@ export const userRoutes = (passport: PassportStatic, router: Router): Router => 
             });
     });
 
+    router.get('/meetings-all', requireRole('admin'),
+        async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+            try {
+                const adopters = await User.find({ role: 'adopter' })
+                    .select('username meetings')
+                    .populate('meetings.animalId', 'name');
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const allMeetings: {
+                    username: string;
+                    animalName: string;
+                    date: Date;
+                }[] = [];
+
+                adopters.forEach((u: IUser & { username: string; meetings: any[] }) => {
+                    u.meetings.forEach(m => {
+                        const mDate: Date = m.date;
+                        if (mDate >= today) {
+                            allMeetings.push({
+                                username: u.username,
+                                animalName: (m.animalId as any).name,
+                                date: mDate
+                            });
+                        }
+                    });
+                });
+
+                allMeetings.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+                res.status(200).json(allMeetings);
+            } catch (err) {
+                console.error('Error fetching adopters’ meetings:', err);
+                res.status(500).send('Internal server error.');
+            }
+        }
+    );
+
     router.post('/meetings', requireRole("adopter"), (req: Request, res: Response) => {
         const user = req.user as IUser;
         const userId = user._id;
         const animalId = req.body.animalId;
-        const meetingDate =  new Date(req.body.date + 'T00:00:00.000Z');;
+        const meetingDate = new Date(req.body.date + 'T00:00:00.000Z');;
 
 
         Animal.findOne({ animalId: animalId }).then(animal => {
