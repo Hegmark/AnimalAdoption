@@ -2,13 +2,13 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { Animal } from '../models/Animal';
 import { requireRole } from '../middlewares/auth';
 import { upload } from "../multer";
-import { processAnimalImage } from '../imageProcessing';
+import { processUploadedImages } from '../imageProcessing';
 import fs from 'fs/promises';
 import path from 'path';
 
 const router = Router();
 
-router.post('/create', requireRole('admin'), upload.single('image'), async (req: Request, res: Response) => {
+router.post('/create', requireRole('admin'), upload.array('images', 10), async (req: Request, res: Response) => {
     const {
         name,
         species,
@@ -34,12 +34,11 @@ router.post('/create', requireRole('admin'), upload.single('image'), async (req:
     });
 
     try {
-        if (req.file) {
-            const safeName = path.parse(req.file.originalname).name.replace(/\s+/g, '_');
-            const baseName = `${Date.now()}-${safeName}`;
-            const processed = await processAnimalImage(req.file.buffer, baseName);
-            a.images = [processed.main];
-            a.thumbnail = processed.thumbnail;
+        const files = (req.files as Express.Multer.File[]) || [];
+        if (files.length) {
+            const { images, thumbnail } = await processUploadedImages(files);
+            a.images = images;
+            a.thumbnail = thumbnail;
         }
         const doc = await a.save();
         res.status(201).json(doc);

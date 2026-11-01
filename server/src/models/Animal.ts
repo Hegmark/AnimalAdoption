@@ -10,7 +10,7 @@ export interface IAnimal extends Document {
     description: string,
     temperament: string,
     healthInfo: string,
-    images?: [string],
+    images?: string[],
     thumbnail?: string,
     available: boolean,
     createdAt: Date

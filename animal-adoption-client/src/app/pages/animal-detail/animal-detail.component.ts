@@ -26,6 +26,34 @@ export class AnimalDetailComponent implements OnInit {
   today: string = '';
   existingRequest = false;
 
+  currentImageIndex = 0;
+  private touchStartX = 0;
+
+  prevImage(): void {
+    const len = this.animal?.images?.length ?? 0;
+    if (len) this.currentImageIndex = (this.currentImageIndex - 1 + len) % len;
+  }
+
+  nextImage(): void {
+    const len = this.animal?.images?.length ?? 0;
+    if (len) this.currentImageIndex = (this.currentImageIndex + 1) % len;
+  }
+
+  goToImage(index: number): void {
+    this.currentImageIndex = index;
+  }
+
+  onTouchStart(ev: TouchEvent): void {
+    this.touchStartX = ev.changedTouches[0].clientX;
+  }
+
+  onTouchEnd(ev: TouchEvent): void {
+    const dx = ev.changedTouches[0].clientX - this.touchStartX;
+    if (Math.abs(dx) > 40) {
+      dx < 0 ? this.nextImage() : this.prevImage();
+    }
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

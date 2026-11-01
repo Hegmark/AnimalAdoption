@@ -36,7 +36,7 @@ export class AdminComponent {
   requestModalOpen = false;
   selectedRequest: AdoptionRequestPopulated | null = null;
 
-  imageFile?: File;
+  imageFiles: File[] = [];
 
   meetings: AdminMeeting[] = [];
 
@@ -79,7 +79,7 @@ export class AdminComponent {
       return;
     }
 
-    this.animalService.createAnimal(this.animal, this.imageFile).subscribe({
+    this.animalService.createAnimal(this.animal, this.imageFiles).subscribe({
       next: () => {
         alert('Állat sikeresen létrehozva!');
         this.clearAnimalForm();
@@ -97,6 +97,7 @@ export class AdminComponent {
     this.animal.temperament = '';
     this.animal.healthInfo = '';
     this.animal.available = true;
+    this.imageFiles = [];
   }
 
   loadRequests() {
@@ -164,7 +165,7 @@ export class AdminComponent {
   onFileSelected(ev: Event) {
     const inp = ev.target as HTMLInputElement;
     if (inp.files?.length) {
-      this.imageFile = inp.files[0];
+      this.imageFiles = Array.from(inp.files);
     }
   }
 }

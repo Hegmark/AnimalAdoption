@@ -13,7 +13,7 @@ import path from 'path';
 import { User } from './models/User';
 import { Animal } from './models/Animal';
 import { News } from './models/News';
-import { processAnimalImage } from './imageProcessing';
+import { processUploadedImages } from './imageProcessing';
 
 dotenv.config();
 
@@ -85,12 +85,11 @@ async function seed(uri: string) {
   if (animalCount === 0) {
     for (const { sourceImage, ...fields } of sampleAnimals) {
       const buffer = await fs.readFile(path.join(SEED_IMAGES_DIR, sourceImage));
-      const baseName = `seed-${path.parse(sourceImage).name}`;
-      const processed = await processAnimalImage(buffer, baseName);
+      const { images, thumbnail } = await processUploadedImages([{ buffer, originalname: sourceImage }]);
       await new Animal({
         ...fields,
-        images: [processed.main],
-        thumbnail: processed.thumbnail,
+        images,
+        thumbnail,
         createdAt: new Date()
       }).save(); // save() so animalId auto-increments
     }

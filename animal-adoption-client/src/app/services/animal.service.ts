@@ -10,7 +10,7 @@ export class AnimalService {
 
   constructor(private http: HttpClient) {}
 
-  createAnimal(animal: Animal, imageFile?: File): Observable<any> {
+  createAnimal(animal: Animal, imageFiles?: File[]): Observable<any> {
     const form = new FormData();
     form.append('name', animal.name);
     form.append('species', animal.species);
@@ -20,8 +20,11 @@ export class AnimalService {
     form.append('temperament', animal.temperament);
     form.append('healthInfo', animal.healthInfo);
     form.append('available', animal.available ? 'true' : 'false');
-    if (imageFile) {
-      form.append('image', imageFile);
+    if (imageFiles) {
+      // The first file becomes the cover/thumbnail; order is preserved.
+      for (const file of imageFiles) {
+        form.append('images', file);
+      }
     }
 
     return this.http.post<Animal>(`${this.apiUrl}/create`, form, { withCredentials: true });

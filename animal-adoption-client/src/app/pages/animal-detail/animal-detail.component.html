@@ -7,8 +7,20 @@
   <p><strong>Természet:</strong> {{ animal.temperament }}</p>
   <p><strong>Egészségügyi állapot:</strong> {{ animal.healthInfo }}</p>
   <p><strong>Elérhető:</strong> {{ animal.available ? 'Igen' : 'Nem' }}</p>
-  <img *ngIf="animal.images && animal.images?.length" [src]="animal.images[0]"
-    alt="{{ animal.name }}" class="animal-photo">
+  <div class="gallery" *ngIf="animal.images && animal.images.length"
+    (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+    <img [src]="animal.images[currentImageIndex]" alt="{{ animal.name }}" class="animal-photo">
+
+    <ng-container *ngIf="animal.images.length > 1">
+      <button type="button" class="gallery-nav prev" (click)="prevImage()" aria-label="Előző kép">‹</button>
+      <button type="button" class="gallery-nav next" (click)="nextImage()" aria-label="Következő kép">›</button>
+      <div class="gallery-counter">{{ currentImageIndex + 1 }} / {{ animal.images.length }}</div>
+      <div class="gallery-dots">
+        <span *ngFor="let img of animal.images; let i = index" class="dot"
+          [class.active]="i === currentImageIndex" (click)="goToImage(i)"></span>
+      </div>
+    </ng-container>
+  </div>
 
   <div *ngIf="animal.available">
 

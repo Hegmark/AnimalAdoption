@@ -21,8 +21,8 @@
         <textarea placeholder="Természet" [(ngModel)]="animal.temperament" name="animalTemperament"></textarea>
         <textarea placeholder="Egészségügyi állapot" [(ngModel)]="animal.healthInfo" name="animalHealthInfo"></textarea>
         <label>
-          Kép feltöltése:
-          <input type="file" (change)="onFileSelected($event)" accept="image/*">
+          Képek feltöltése (az első lesz a borítókép):
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" multiple>
         </label>
         <label>
           Elérhető örökbefogadásra
