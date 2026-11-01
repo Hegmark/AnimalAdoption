@@ -5,8 +5,8 @@ import { Animal } from '../models/animal';
 
 @Injectable({ providedIn: 'root' })
 export class AnimalService {
-  private apiUrl = 'http://localhost:5000/api/animals';
-  private favUrl = 'http://localhost:5000/api/user';
+  private apiUrl = '/api/animals';
+  private favUrl = '/api/user';
 
   constructor(private http: HttpClient) {}
 

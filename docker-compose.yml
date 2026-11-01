@@ -1,0 +1,57 @@
+# Base stack — MongoDB + API server + Angular client (nginx).
+# This file is environment-agnostic; per-environment settings live in:
+#   docker-compose.override.yml   (dev, applied automatically by `docker compose`)
+#   docker-compose.prod.yml       (prod, applied explicitly with -f)
+#
+# Dev (default):
+#   docker compose up -d --build            # app on http://localhost:4200
+#   docker compose --profile seed run --rm seed   # seed a fresh database
+#   docker compose down                     # stop (data kept)
+#
+# Prod (isolated project + volumes):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml -p animaladoption_prod up -d --build
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml -p animaladoption_prod --profile seed run --rm seed
+#   # app on http://localhost:8080
+
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  server:
+    build: ./server
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/animal_adoption
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  client:
+    build: ./animal-adoption-client
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  # One-off seeder. Not started by `up`; run on demand with `--profile seed run --rm seed`.
+  seed:
+    build: ./server
+    profiles: ["seed"]
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/animal_adoption
+    depends_on:
+      mongo:
+        condition: service_healthy
+    command: ["node", "build/seed.js"]
+    restart: "no"
+
+volumes:
+  mongo_data:

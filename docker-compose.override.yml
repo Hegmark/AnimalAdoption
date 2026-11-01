@@ -1,0 +1,20 @@
+# Development overrides — applied automatically by `docker compose up`.
+# Publishes ports to the host and uses a bind mount for uploads so the
+# repo's sample images are available and new uploads land back in the repo.
+
+services:
+  mongo:
+    ports:
+      - "27017:27017"
+
+  server:
+    environment:
+      NODE_ENV: development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server/uploads:/app/uploads
+
+  client:
+    ports:
+      - "4200:80"

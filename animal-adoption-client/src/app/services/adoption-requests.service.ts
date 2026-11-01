@@ -5,7 +5,7 @@ import { AdoptionRequest, AdoptionRequestPopulated } from '../models/adoption-re
 
 @Injectable({ providedIn: 'root' })
 export class AdoptionRequestService {
-  private apiUrl = 'http://localhost:5000/api/adoption';
+  private apiUrl = '/api/adoption';
 
   constructor(private http: HttpClient) {}
 

@@ -1,0 +1,26 @@
+# Production overrides — applied explicitly:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml -p animaladoption_prod up -d --build
+#
+# The client is the only service exposed to the host (port 8080); it reverse-proxies
+# /api and /uploads to the server internally, so no API/DB ports are published.
+# Uploads use a named volume (not a repo bind mount). Use a separate project name
+# (-p) to keep prod data and containers isolated from dev.
+
+services:
+  mongo:
+    restart: always
+
+  server:
+    environment:
+      NODE_ENV: production
+    volumes:
+      - uploads_data:/app/uploads
+    restart: always
+
+  client:
+    ports:
+      - "8080:80"
+    restart: always
+
+volumes:
+  uploads_data:

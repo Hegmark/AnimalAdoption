@@ -5,7 +5,7 @@ import { News } from '../models/news';
 
 @Injectable({ providedIn: 'root' })
 export class NewsService {
-  private apiUrl = 'http://localhost:5000/api/news';
+  private apiUrl = '/api/news';
 
   constructor(private http: HttpClient) {}
 

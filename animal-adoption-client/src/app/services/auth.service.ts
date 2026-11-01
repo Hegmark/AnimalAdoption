@@ -25,7 +25,7 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post<any>('http://localhost:5000/api/user/login', body, { headers, withCredentials: true, responseType: 'text' as 'json' }).pipe(
+    return this.http.post<any>('/api/user/login', body, { headers, withCredentials: true, responseType: 'text' as 'json' }).pipe(
       tap(res => {
         this.loggedIn.next(true);
         this.userRole.next(res);
@@ -43,11 +43,11 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post('http://localhost:5000/api/user/register', body, { headers: headers, withCredentials: true });
+    return this.http.post('/api/user/register', body, { headers: headers, withCredentials: true });
   }
 
   checkAuth() {
-    return this.http.get<any>('http://localhost:5000/api/user/checkAuth', { withCredentials: true }).pipe(
+    return this.http.get<any>('/api/user/checkAuth', { withCredentials: true }).pipe(
       tap(res => {
         this.loggedIn.next(res.authenticated);
         this.userRole.next(res.role);
@@ -56,7 +56,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.http.post('http://localhost:5000/api/user/logout', {}, { withCredentials: true, responseType: 'text' as 'json' }).pipe(
+    return this.http.post('/api/user/logout', {}, { withCredentials: true, responseType: 'text' as 'json' }).pipe(
       tap(() => {
         this.loggedIn.next(false);
         this.userRole.next(null);
@@ -65,13 +65,13 @@ export class AuthService {
   }
 
   getMeetings(): Observable<Meeting[]> {
-    return this.http.get<Meeting[]>(`http://localhost:5000/api/user/meetings`, {
+    return this.http.get<Meeting[]>(`/api/user/meetings`, {
       withCredentials: true
     });
   }
 
   createMeetings(meeting: { animalId: number, date: string; }): Observable<any> {
-    return this.http.post<Meeting>(`http://localhost:5000/api/user/meetings`, meeting, {
+    return this.http.post<Meeting>(`/api/user/meetings`, meeting, {
       withCredentials: true
     });
   }

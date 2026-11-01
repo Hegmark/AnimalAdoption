@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node build/index.js",
-    "rebuildAndStart": "npm run build && npm start"
+    "rebuildAndStart": "npm run build && npm start",
+    "seed": "ts-node src/seed.ts"
   },
   "repository": {
     "type": "git",

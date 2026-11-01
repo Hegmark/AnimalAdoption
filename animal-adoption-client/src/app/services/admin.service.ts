@@ -7,7 +7,7 @@ import { AdminMeeting } from '../models/meetings';
   providedIn: 'root'
 })
 export class AdminService {
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = '/api';
 
   constructor(private http: HttpClient) {}
 

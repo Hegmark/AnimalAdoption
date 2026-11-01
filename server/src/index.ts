@@ -17,11 +17,15 @@ import path from 'path';
 const app = express();
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+    console.error('MONGODB_URI is not set. Copy server/.env.example to server/.env, or set it in the environment.');
+    process.exit(1);
+}
 const port = 5000;
 
 mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
+  .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 
@@ -63,6 +67,18 @@ app.use(
       fallthrough: false 
     })
   );
+
+app.get('/health', async (_req, res) => {
+    try {
+        if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+            throw new Error('database not connected');
+        }
+        await mongoose.connection.db.admin().ping();
+        res.status(200).json({ status: 'ok', db: 'up' });
+    } catch {
+        res.status(503).json({ status: 'error', db: 'down' });
+    }
+});
 
 app.use('/api/user', userRoutes(passport, Router()));
 app.use('/api/news', newsRoutes);
