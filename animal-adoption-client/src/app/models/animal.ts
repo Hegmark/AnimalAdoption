@@ -8,6 +8,7 @@ export interface Animal {
     temperament: string;
     healthInfo: string;
     images?: string[];
+    thumbnail?: string;
     available: boolean;
     animalId: number;
   }

@@ -8,9 +8,12 @@
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import fs from 'fs/promises';
+import path from 'path';
 import { User } from './models/User';
 import { Animal } from './models/Animal';
 import { News } from './models/News';
+import { processAnimalImage } from './imageProcessing';
 
 dotenv.config();
 
@@ -26,30 +29,35 @@ const ADMIN_EMAIL = 'admin@example.com';
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'admin123';
 
+// Source images live under assets/seed so they are baked into the image and
+// available regardless of the (possibly empty) uploads volume. Each is run
+// through the same processing pipeline as a real upload.
+const SEED_IMAGES_DIR = path.resolve(__dirname, '../assets/seed');
+
 const sampleAnimals = [
   {
     name: 'Mancs', species: 'Kutya', breed: 'Keverék', age: 3,
     description: 'Barátságos és energikus kutya, aki egy aktív családot keres.',
     temperament: 'Játékos', healthInfo: 'Oltva, ivartalanítva.',
-    images: ['/uploads/1746207978517-mancs.jpg'], available: true
+    sourceImage: '1746207978517-mancs.jpg', available: true
   },
   {
     name: 'Cirmos', species: 'Macska', breed: 'Európai rövidszőrű', age: 2,
     description: 'Nyugodt lakásmacska, aki imádja a napsütötte ablakpárkányokat.',
     temperament: 'Nyugodt', healthInfo: 'Oltva, féregtelenítve.',
-    images: ['/uploads/1746208054272-cirmos.png'], available: true
+    sourceImage: '1746208054272-cirmos.png', available: true
   },
   {
     name: 'Bodri', species: 'Kutya', breed: 'Puli', age: 5,
     description: 'Hűséges őrző, jól kijön a gyerekekkel.',
     temperament: 'Védelmező', healthInfo: 'Oltva.',
-    images: ['/uploads/1746208105248-bodri.jpg'], available: true
+    sourceImage: '1746208105248-bodri.jpg', available: true
   },
   {
     name: 'Nyuszi', species: 'Nyúl', breed: 'Törpe', age: 1,
     description: 'Kicsi, kíváncsi nyúl, aki gyengéd otthonra vágyik.',
     temperament: 'Félénk', healthInfo: 'Egészséges.',
-    images: ['/uploads/1746208165159-nyuszi.jpg'], available: true
+    sourceImage: '1746208165159-nyuszi.jpg', available: true
   }
 ];
 
@@ -75,10 +83,18 @@ async function seed(uri: string) {
   // Animals
   const animalCount = await Animal.countDocuments();
   if (animalCount === 0) {
-    for (const a of sampleAnimals) {
-      await new Animal({ ...a, createdAt: new Date() }).save(); // save() so animalId auto-increments
+    for (const { sourceImage, ...fields } of sampleAnimals) {
+      const buffer = await fs.readFile(path.join(SEED_IMAGES_DIR, sourceImage));
+      const baseName = `seed-${path.parse(sourceImage).name}`;
+      const processed = await processAnimalImage(buffer, baseName);
+      await new Animal({
+        ...fields,
+        images: [processed.main],
+        thumbnail: processed.thumbnail,
+        createdAt: new Date()
+      }).save(); // save() so animalId auto-increments
     }
-    console.log(`  + ${sampleAnimals.length} sample animals created`);
+    console.log(`  + ${sampleAnimals.length} sample animals created (images processed)`);
   } else {
     console.log(`  = ${animalCount} animals already present, skipping`);
   }

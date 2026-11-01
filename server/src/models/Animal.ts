@@ -10,7 +10,8 @@ export interface IAnimal extends Document {
     description: string,
     temperament: string,
     healthInfo: string,
-    images?: [string], 
+    images?: [string],
+    thumbnail?: string,
     available: boolean,
     createdAt: Date
     animalId: number
@@ -24,7 +25,8 @@ const AnimalSchema = new Schema<IAnimal>({
     description: { type: String, required: true },
     temperament: { type: String, required: true },
     healthInfo: { type: String, required: true },
-    images: [{ type: String }], 
+    images: [{ type: String }],
+    thumbnail: { type: String },
     available: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });

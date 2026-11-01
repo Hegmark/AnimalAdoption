@@ -1,5 +1,6 @@
 <div class="animal-list">
   <div class="animal-card" *ngFor="let animal of animals" (click)="goToAnimal(animal.animalId)">
+    <img *ngIf="animal.thumbnail" [src]="animal.thumbnail" alt="{{ animal.name }}" class="animal-thumb">
     <h3>{{ animal.name }}</h3>
     <p><strong>Faj:</strong> {{ animal.species }}</p>
     <p><strong>Fajta:</strong> {{ animal.breed }}</p>

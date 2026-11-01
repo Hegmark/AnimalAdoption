@@ -16,6 +16,7 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/build ./build
+COPY assets ./assets
 # uploads is provided at runtime via a volume (bind mount in dev, named volume in prod)
 RUN mkdir -p uploads && chown -R node:node /app
 USER node

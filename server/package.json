@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node build/index.js",
     "rebuildAndStart": "npm run build && npm start",
-    "seed": "ts-node src/seed.ts"
+    "seed": "ts-node src/seed.ts",
+    "watermark": "node scripts/generate-watermark.mjs"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "mongoose-sequence": "^6.0.1",
     "multer": "^1.4.5-lts.2",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "sharp": "^0.35.5"
   }
 }
