@@ -57,7 +57,7 @@ jobs:
       - name: Build client image
         run: docker build --pull -t animaladoption-client:ci ./animal-adoption-client
       - name: Scan server image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: animaladoption-server:ci
           scanners: vuln
@@ -67,7 +67,7 @@ jobs:
           exit-code: '0'
           format: table
       - name: Scan client image
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: animaladoption-client:ci
           scanners: vuln
