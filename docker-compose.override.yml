@@ -18,3 +18,8 @@ services:
   client:
     ports:
       - "4200:80"
+
+  mailhog:
+    ports:
+      - "1025:1025"   # SMTP (for a server running on the host)
+      - "8025:8025"   # web UI: http://localhost:8025

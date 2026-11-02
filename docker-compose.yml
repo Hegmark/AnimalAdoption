@@ -30,9 +30,17 @@ services:
     build: ./server
     environment:
       MONGODB_URI: mongodb://mongo:27017/animal_adoption
+      SMTP_HOST: mailhog
+      SMTP_PORT: "1025"
     depends_on:
       mongo:
         condition: service_healthy
+      mailhog:
+        condition: service_started
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
     restart: unless-stopped
 
   client:

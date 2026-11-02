@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { requireAuthentication, requireRole } from '../middlewares/auth';
 import { AdoptionRequest } from '../models/AdoptionRequest';
-import { IUser } from '../models/User';
+import { IUser, User } from '../models/User';
 import mongoose from 'mongoose';
 import { Animal } from '../models/Animal';
+import { sendAdoptionStatusEmail, AdoptionStatus } from '../mailer';
 
 
 const router = Router();
@@ -93,28 +94,70 @@ router.get('/my-requests', requireRole('adopter'), (req: Request, res: Response)
         });
 });
 
-router.put('/update/:id', requireRole('admin'), (req: Request, res: Response) => {
+// Best-effort email notification for a request's adopter. Never throws.
+async function notifyRequester(userId: any, animalName: string | undefined, status: AdoptionStatus): Promise<void> {
+    try {
+        const user = await User.findById(userId).select('email');
+        if (user?.email) {
+            await sendAdoptionStatusEmail(user.email, animalName ?? 'az állat', status);
+        }
+    } catch (err) {
+        console.error('Failed to notify requester:', err);
+    }
+}
+
+router.put('/update/:id', requireRole('admin'), async (req: Request, res: Response): Promise<void> => {
     const id = req.params.id;
     const { status } = req.body;
 
-    AdoptionRequest.findOneAndUpdate({ adReId: id }, { status }, { new: true })
-        .then(data => {
-            if (!data) return res.status(404).send('Adoption request not found.');
+    try {
+        const request = await AdoptionRequest.findOneAndUpdate({ adReId: id }, { status }, { new: true });
+        if (!request) {
+            res.status(404).send('Adoption request not found.');
+            return;
+        }
 
-            const availability = !(status === 'approved')
-            Animal.findByIdAndUpdate(data.animalId, { available: availability })
-                .then(() => {
-                    res.status(200).send(data);
-                })
-                .catch(err => {
-                    console.error(err);
-                    res.status(500).send('Error updating animal availability.');
-                });
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).send('Internal server error.');
-        });
+        const animal = await Animal.findById(request.animalId);
+
+        if (status === 'approved') {
+            // The animal is now taken.
+            if (animal) {
+                animal.available = false;
+                await animal.save();
+            }
+
+            // Auto-reject the other still-pending requests for the same animal.
+            const siblings = await AdoptionRequest.find({
+                animalId: request.animalId,
+                status: 'pending',
+                _id: { $ne: request._id }
+            });
+            if (siblings.length) {
+                await AdoptionRequest.updateMany(
+                    { _id: { $in: siblings.map(s => s._id) } },
+                    { status: 'rejected' }
+                );
+            }
+
+            // Notify everyone (best-effort; does not block the response).
+            notifyRequester(request.userId, animal?.name, 'approved');
+            for (const sibling of siblings) {
+                notifyRequester(sibling.userId, animal?.name, 'rejected');
+            }
+        } else if (status === 'rejected') {
+            // Free the animal up again and notify the requester.
+            if (animal) {
+                animal.available = true;
+                await animal.save();
+            }
+            notifyRequester(request.userId, animal?.name, 'rejected');
+        }
+
+        res.status(200).send(request);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal server error.');
+    }
 });
 
 router.get('/:id', requireAuthentication(), (req: Request, res: Response) => {
