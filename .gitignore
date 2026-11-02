@@ -1,0 +1,7 @@
+# Environment files with secrets — never commit these (keep .env.example only)
+.env
+.env.local
+.env.*.local
+
+# Generated SBOMs (produced in CI and uploaded as artifacts)
+**/sbom.cdx.json

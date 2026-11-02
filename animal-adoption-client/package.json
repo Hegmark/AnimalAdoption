@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "sbom": "npx --yes @cyclonedx/cyclonedx-npm@1.19.3 --output-file sbom.cdx.json --omit dev"
   },
   "private": true,
   "dependencies": {

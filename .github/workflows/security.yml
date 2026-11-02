@@ -1,0 +1,78 @@
+name: security
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  npm-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Server audit (production deps)
+        working-directory: server
+        run: npm audit --omit=dev --audit-level=high
+      - name: Client audit (production deps)
+        working-directory: animal-adoption-client
+        run: npm audit --omit=dev --audit-level=critical
+
+  sbom:
+    name: Generate SBOMs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Server deps + SBOM
+        working-directory: server
+        run: |
+          npm ci
+          npm run sbom
+      - name: Client deps + SBOM
+        working-directory: animal-adoption-client
+        run: |
+          npm ci
+          npm run sbom
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sboms
+          path: |
+            server/sbom.cdx.json
+            animal-adoption-client/sbom.cdx.json
+
+  image-scan:
+    name: Image scan (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build server image
+        run: docker build --pull -t animaladoption-server:ci ./server
+      - name: Build client image
+        run: docker build --pull -t animaladoption-client:ci ./animal-adoption-client
+      - name: Scan server image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: animaladoption-server:ci
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          trivyignores: .trivyignore
+          exit-code: '0'
+          format: table
+      - name: Scan client image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: animaladoption-client:ci
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          trivyignores: .trivyignore
+          exit-code: '0'
+          format: table

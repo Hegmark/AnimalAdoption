@@ -8,7 +8,8 @@
     "start": "node build/index.js",
     "rebuildAndStart": "npm run build && npm start",
     "seed": "ts-node src/seed.ts",
-    "watermark": "node scripts/generate-watermark.mjs"
+    "watermark": "node scripts/generate-watermark.mjs",
+    "sbom": "npx --yes @cyclonedx/cyclonedx-npm@1.19.3 --output-file sbom.cdx.json --omit dev"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
   },
   "homepage": "https://github.com/Hegmark/AnimalAdoption#readme",
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
@@ -37,7 +38,7 @@
   "keywords": [],
   "description": "",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

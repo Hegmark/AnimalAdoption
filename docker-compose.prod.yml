@@ -13,6 +13,8 @@ services:
   server:
     environment:
       NODE_ENV: production
+      # Required in production: fails fast if SESSION_SECRET is not provided.
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set for production}
     volumes:
       - uploads_data:/app/uploads
     restart: always
@@ -21,6 +23,11 @@ services:
     ports:
       - "8080:80"
     restart: always
+
+  # Seeder shares the uploads named volume so generated images land where the server reads them.
+  seed:
+    volumes:
+      - uploads_data:/app/uploads
 
 volumes:
   uploads_data:

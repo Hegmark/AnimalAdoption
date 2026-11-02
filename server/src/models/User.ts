@@ -1,10 +1,9 @@
 import mongoose, { Document, Model, Schema, ObjectId } from 'mongoose';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const SALT_FACTOR = 10;
 
 export interface IUser extends Document {
-  _id: ObjectId,
   username: string;
   email: string;
   passwordHash: string;
@@ -34,36 +33,27 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
 
 
 
-UserSchema.pre<IUser>('save', function(next) {
-    const user = this;
-
-    if (!user.isModified('passwordHash')) {
+UserSchema.pre<IUser>('save', async function(next) {
+    if (!this.isModified('passwordHash')) {
         return next();
     }
-    
-    bcrypt.genSalt(SALT_FACTOR, (error, salt) => {
-        if (error) {
-            return next(error);
-        }
-        bcrypt.hash(user.passwordHash, salt, (err, encrypted) => {
-            if (err) {
-                return next(err);
-            }
-            user.passwordHash = encrypted;
-            next();
-        });
-    });
+
+    try {
+        const salt = await bcrypt.genSalt(SALT_FACTOR);
+        this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
+        next();
+    } catch (error) {
+        next(error as Error);
+    }
 });
 
-UserSchema.methods.comparePassword = function(candidatePassword: string, callback: (error: Error | null, isMatch: boolean) => void): void {
-    const user = this;
-    bcrypt.compare(candidatePassword, user.passwordHash, (error, isMatch) => {
-        if (error) {
-            console.log("Error comparing password:", error);
-            callback(error, false);
-        }
-        callback(null, isMatch);
-    });
+UserSchema.methods.comparePassword = function(
+    candidatePassword: string,
+    callback: (error: Error | null, isMatch: boolean) => void
+): void {
+    bcrypt.compare(candidatePassword, this.passwordHash)
+        .then(isMatch => callback(null, isMatch))
+        .catch(error => callback(error, false));
 }
 
 

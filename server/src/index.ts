@@ -22,6 +22,22 @@ if (!MONGODB_URI) {
     console.error('MONGODB_URI is not set. Copy server/.env.example to server/.env, or set it in the environment.');
     process.exit(1);
 }
+
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) {
+    console.error('SESSION_SECRET is not set. Copy .env.example to .env, or set it in the environment.');
+    process.exit(1);
+}
+
+// Comma-separated list of browser origins allowed to call the API.
+const CORS_ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:4200,http://localhost:8080')
+    .split(',')
+    .map(o => o.trim())
+    .filter(Boolean);
+
+// Only send the session cookie over HTTPS when explicitly enabled (set in real deployments).
+const COOKIE_SECURE = process.env.SESSION_COOKIE_SECURE === 'true';
+
 const port = 5000;
 
 mongoose.connect(MONGODB_URI)
@@ -30,10 +46,10 @@ mongoose.connect(MONGODB_URI)
 
 
 
-const whitelist = ['*', 'http://localhost:4200']
 const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allowed?: boolean) => void) => {
-        if (whitelist.indexOf(origin!) !== -1 || whitelist.includes('*')) {
+        // Allow non-browser / same-origin requests (no Origin header) and whitelisted origins.
+        if (!origin || CORS_ORIGINS.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS.'));
@@ -48,9 +64,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 const sessionOptions: expressSession.SessionOptions = {
-    secret: 'testsecret',
+    secret: SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: COOKIE_SECURE
+    }
 };
 app.use(expressSession(sessionOptions));
 app.use(express.json());

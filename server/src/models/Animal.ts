@@ -2,7 +2,6 @@ import mongoose, { Document, Model, ObjectId, Schema } from 'mongoose';
 
 
 export interface IAnimal extends Document {
-    _id: ObjectId,
     name: string,
     species: string,
     breed: string,

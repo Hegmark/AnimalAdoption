@@ -30,6 +30,8 @@ services:
     build: ./server
     environment:
       MONGODB_URI: mongodb://mongo:27017/animal_adoption
+      # Dev default; override by setting SESSION_SECRET in your environment or ./.env
+      SESSION_SECRET: ${SESSION_SECRET:-dev-insecure-secret-change-me}
       SMTP_HOST: mailhog
       SMTP_PORT: "1025"
     depends_on:

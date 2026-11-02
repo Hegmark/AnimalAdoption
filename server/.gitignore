@@ -5,6 +5,14 @@ node_modules/
 dist/
 build/
 
+# Runtime-generated uploads (processed images + admin uploads).
+# Source images live in assets/seed/; `npm run seed` regenerates this folder.
+uploads/*
+!uploads/.gitkeep
+
+# Generated SBOM (produced in CI / via `npm run sbom`)
+sbom.cdx.json
+
 # Environment variables
 .env
 .env.local

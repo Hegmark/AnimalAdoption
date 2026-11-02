@@ -2,7 +2,6 @@ import mongoose, { Document, Model, ObjectId, Schema } from 'mongoose';
 
 
 export interface IAdoptionRequest extends Document {
-    _id: ObjectId,
     animalId: ObjectId,
     userId: ObjectId,
     status: 'pending' | 'approved' | 'rejected',

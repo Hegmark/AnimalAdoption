@@ -1,0 +1,10 @@
+# Trivy ignore list — accepted vulnerabilities, with justification.
+#
+# Image scans run with `--ignore-unfixed`, so only vulnerabilities that have a
+# published fix are reported. Remaining findings are base-image (Node runtime /
+# Alpine OS) issues that are resolved by rebuilding on refreshed base images;
+# the image-scan job is reporting-only and does not gate on them.
+#
+# Add specific CVE IDs below (one per line) only after reviewing and accepting
+# them, e.g.:
+# CVE-2025-XXXXX  # accepted: base-image OS package, not reachable from the app

@@ -19,6 +19,11 @@ services:
     ports:
       - "4200:80"
 
+  # Seeder shares the server's uploads bind mount so generated images land in ./server/uploads.
+  seed:
+    volumes:
+      - ./server/uploads:/app/uploads
+
   mailhog:
     ports:
       - "1025:1025"   # SMTP (for a server running on the host)
