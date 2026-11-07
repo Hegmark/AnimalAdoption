@@ -34,6 +34,8 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-dev-insecure-secret-change-me}
       SMTP_HOST: mailhog
       SMTP_PORT: "1025"
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       mongo:
         condition: service_healthy
@@ -57,6 +59,8 @@ services:
     profiles: ["seed"]
     environment:
       MONGODB_URI: mongodb://mongo:27017/animal_adoption
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       mongo:
         condition: service_healthy
@@ -65,3 +69,4 @@ services:
 
 volumes:
   mongo_data:
+  uploads_data:

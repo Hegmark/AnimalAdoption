@@ -1,6 +1,6 @@
 # Development overrides — applied automatically by `docker compose up`.
-# Publishes ports to the host and uses a bind mount for uploads so the
-# repo's sample images are available and new uploads land back in the repo.
+# Publishes ports to the host. Uploads use the named volume defined in the base
+# file (works consistently across hosts and CI, since the container runs non-root).
 
 services:
   mongo:
@@ -12,17 +12,10 @@ services:
       NODE_ENV: development
     ports:
       - "5000:5000"
-    volumes:
-      - ./server/uploads:/app/uploads
 
   client:
     ports:
       - "4200:80"
-
-  # Seeder shares the server's uploads bind mount so generated images land in ./server/uploads.
-  seed:
-    volumes:
-      - ./server/uploads:/app/uploads
 
   mailhog:
     ports:

@@ -3,7 +3,7 @@
 #
 # The client is the only service exposed to the host (port 8080); it reverse-proxies
 # /api and /uploads to the server internally, so no API/DB ports are published.
-# Uploads use a named volume (not a repo bind mount). Use a separate project name
+# Uploads use the named volume from the base file. Use a separate project name
 # (-p) to keep prod data and containers isolated from dev.
 
 services:
@@ -15,19 +15,9 @@ services:
       NODE_ENV: production
       # Required in production: fails fast if SESSION_SECRET is not provided.
       SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET must be set for production}
-    volumes:
-      - uploads_data:/app/uploads
     restart: always
 
   client:
     ports:
       - "8080:80"
     restart: always
-
-  # Seeder shares the uploads named volume so generated images land where the server reads them.
-  seed:
-    volumes:
-      - uploads_data:/app/uploads
-
-volumes:
-  uploads_data:
