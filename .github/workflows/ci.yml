@@ -1,0 +1,95 @@
+name: ci
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server-tests:
+    name: Server tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+      - name: Run unit + integration tests (coverage)
+        working-directory: server
+        run: npm test -- --coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-coverage
+          path: server/coverage
+
+  client-tests:
+    name: Client tests
+    runs-on: ubuntu-latest
+    env:
+      CHROME_BIN: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: animal-adoption-client/package-lock.json
+      - name: Install dependencies
+        working-directory: animal-adoption-client
+        run: npm ci
+      - name: Run headless unit tests
+        working-directory: animal-adoption-client
+        run: npm run test:ci
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and start the stack
+        run: docker compose up -d --build
+      - name: Wait for the app to be ready
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:5000/health >/dev/null && echo "server up" && break
+            sleep 2
+          done
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:4200 >/dev/null && echo "client up" && break
+            sleep 2
+          done
+      - name: Seed the database
+        run: docker compose --profile seed run --rm seed
+      - name: Install e2e dependencies + browser
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Run Playwright
+        working-directory: e2e
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: e2e/playwright-report
+      - name: Dump server logs on failure
+        if: failure()
+        run: docker compose logs server
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v

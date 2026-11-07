@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessNoSandbox",
     "sbom": "npx --yes @cyclonedx/cyclonedx-npm@1.19.3 --output-file sbom.cdx.json --omit dev"
   },
   "private": true,

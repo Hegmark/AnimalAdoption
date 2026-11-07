@@ -128,6 +128,35 @@ npm start                       # ng serve; az /api és /uploads az 5000-re prox
 
 ---
 
+## Tesztelés
+
+Három rétegű, automatizált tesztkészlet; részletek: [TESTING.md](TESTING.md).
+A CI (`.github/workflows/ci.yml`) minden push/PR esetén mindhármat lefuttatja.
+
+- **Szerver (Jest + Supertest)** – memóriabeli MongoDB-vel, külső szolgáltatás nélkül:
+  ```bash
+  cd server && npm ci && npm test
+  ```
+  Lefedi az autentikációt, az állatkezelést, a képfeldolgozást és az örökbefogadási
+  munkafolyamatot (jóváhagyás → a többi kérelem automatikus elutasítása), a hibaágakkal együtt.
+
+- **Kliens (Karma + Jasmine, headless Chrome):**
+  ```bash
+  cd animal-adoption-client && npm ci && npm run test:ci
+  ```
+
+- **End-to-end (Playwright)** – a futó stack ellen (regisztráció → belépés → örökbefogadási kérelem):
+  ```bash
+  docker compose up -d --build
+  docker compose --profile seed run --rm seed
+  cd e2e && npm ci && npx playwright install chromium && npx playwright test
+  ```
+
+Biztonsági és ellátásilánc-ellenőrzések (függőség- és image-vizsgálat, SBOM) a
+`.github/workflows/security.yml` munkafolyamatban futnak; részletek: [SECURITY.md](SECURITY.md).
+
+---
+
 ## Konfiguráció (környezeti változók)
 
 | Változó | Alapértelmezés | Leírás |
